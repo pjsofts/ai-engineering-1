@@ -1,0 +1,27 @@
+{
+  "name": "week5-workshop",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "part1": "cd part1-read-only && tsx --env-file=../.env repl.ts",
+    "part2": "npm run sandbox --silent && cd sandbox && tsx --env-file=../.env ../part2-write-edit/repl.ts",
+    "part3": "npm run sandbox --silent && cd sandbox && tsx --env-file=../.env ../part3-bash/repl.ts",
+    "part4": "npm run sandbox --silent && cd sandbox && tsx --env-file=../.env ../part4-permissions/repl.ts",
+    "part5": "npm run sandbox --silent && cd sandbox && tsx --env-file=../.env ../part5-agent/repl.ts",
+    "guards": "npm run sandbox:reset --silent && cd sandbox && tsx ../part5-agent/smoke.ts --guards-only",
+    "sandbox": "node -e \"const fs=require('node:fs');if(!fs.existsSync('sandbox'))fs.cpSync('fixture','sandbox',{recursive:true});\"",
+    "sandbox:reset": "node -e \"const fs=require('node:fs');fs.rmSync('sandbox',{recursive:true,force:true});fs.cpSync('fixture','sandbox',{recursive:true});\"",
+    "smoke": "npm run sandbox:reset --silent && cd sandbox && tsx --env-file=../.env ../part5-agent/smoke.ts",
+    "start": "npm run part5",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "openai": "^4.77.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
+  }
+}
