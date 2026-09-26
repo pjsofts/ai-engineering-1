@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import Markdown from "./Markdown";
+import Bench, { type BenchProgress } from "./Bench";
 
 // ---------- types ----------
 interface PartDef {
@@ -11,8 +12,9 @@ type Status = "idle" | "running" | "recovering" | "done" | "crashed" | "suspende
 
 interface ChatItem {
   id: number;
-  role: "user" | "assistant" | "system" | "draft" | "approval" | "crash";
+  role: "user" | "assistant" | "system" | "draft" | "approval" | "crash" | "jev";
   text: string;
+  event?: AgentEvent;   // for role "jev": the jev.* event the card renders
   meta?: string;
   wfId?: string;
 }
@@ -23,6 +25,7 @@ const GLYPH: Record<string, string> = {
   "agent.handoff": "↪", "plan.created": "🗺", "subagent.started": "├",
   "subagent.completed": "✓", "subagent.failed": "✘",
   "approval.requested": "✋", "approval.resolved": "🖊",
+  "jev.requested": "?", "jev.answered": "⚡", "jev.triaged": "🏷", "jev.gate": "🛡",
 };
 const EVENT_TONE: Record<string, string> = {
   "workflow.started": "blue", "workflow.completed": "green", "workflow.failed": "red",
@@ -30,6 +33,7 @@ const EVENT_TONE: Record<string, string> = {
   "agent.handoff": "violet", "plan.created": "blue", "subagent.started": "blue",
   "subagent.completed": "green", "subagent.failed": "red",
   "approval.requested": "amber", "approval.resolved": "violet",
+  "jev.requested": "teal", "jev.answered": "teal", "jev.triaged": "teal", "jev.gate": "teal",
 };
 
 function activityLabel(e: AgentEvent): string {
@@ -44,6 +48,10 @@ function activityLabel(e: AgentEvent): string {
     case "subagent.failed": return `investigator "${e.agent}" crashed — continuing…`;
     case "approval.requested": return "waiting for a human decision…";
     case "approval.resolved": return "human decided — continuing…";
+    case "jev.requested": return `asking Jev: ${e.purpose}…`;
+    case "jev.answered": return `Jev answered (${e.latency_ms} ms) — code is deciding…`;
+    case "jev.triaged": return "LLM is drafting replies from Jev's triage…";
+    case "jev.gate": return e.verdict === "pass" ? "check passed — sending…" : "send blocked — LLM will redraft…";
     default: return "model is thinking…";
   }
 }
@@ -52,7 +60,8 @@ let nextId = 1;
 
 export default function App() {
   const [parts, setParts] = useState<PartDef[]>([]);
-  const [sel, setSel] = useState("part1");
+  // ?tab=part2jev or ?tab=bench deep-links straight to a tab.
+  const [sel, setSel] = useState(() => new URLSearchParams(location.search).get("tab") ?? "part1");
   const [task, setTask] = useState("");
   const [taskDirty, setTaskDirty] = useState(false);
   const [crash, setCrash] = useState(false);
@@ -62,6 +71,7 @@ export default function App() {
   const [status, setStatus] = useState<Record<string, Status>>({});
   const [activity, setActivity] = useState<Record<string, string>>({});
   const [busyPart, setBusyPart] = useState<string | null>(null);
+  const [benchProgress, setBenchProgress] = useState<BenchProgress | null>(null);
   const eventsEnd = useRef<HTMLDivElement>(null);
   const chatEnd = useRef<HTMLDivElement>(null);
 
@@ -80,6 +90,11 @@ export default function App() {
     es.onmessage = (m) => {
       const msg = JSON.parse(m.data);
       if (msg.kind === "hello") { setBusyPart(msg.busy ?? null); return; }
+      if (msg.kind === "bench") {
+        setBenchProgress(msg);
+        setBusyPart(msg.status === "running" ? "bench" : null);
+        return;
+      }
       const pid: string = msg.part;
       if (msg.kind === "event") {
         const e: AgentEvent = msg.event;
@@ -89,6 +104,9 @@ export default function App() {
           const args = e.args as any;
           if (args?.message) addChat(pid, { role: "draft", text: String(args.message),
             meta: `draftReply · ${args.item_id ?? ""}` });
+        }
+        if (e.type === "jev.answered" || e.type === "jev.triaged" || e.type === "jev.gate") {
+          addChat(pid, { role: "jev", text: "", event: e });
         }
         if (e.type === "agent.handoff") {
           addChat(pid, { role: "system", text: `Handoff: ${e.from} → ${e.to} — ${e.reason ?? ""}` });
@@ -155,7 +173,7 @@ export default function App() {
     await fetch("/api/run", { method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({ part: sel, task, resume,
-        crash: sel === "part2" && crash, chaos: sel === "part6" && chaos }) });
+        crash: !!part.options?.includes("crash") && crash, chaos: sel === "part6" && chaos }) });
   }
   async function approve(wfId: string, ok: boolean) {
     await fetch("/api/approve", { method: "POST",
@@ -192,6 +210,8 @@ export default function App() {
               {p.title}
             </button>
           ))}
+          <button className={`tab ${sel === "bench" ? "active" : ""} ${busyPart === "bench" ? "busy" : ""}`}
+            onClick={() => setSel("bench")}>📊 Jev benchmark</button>
         </nav>
       </header>
 
@@ -224,14 +244,16 @@ export default function App() {
         </section>
       )}
 
-      <main>
+      {sel === "bench" && <Bench progress={benchProgress} busy={busyPart} />}
+      {sel !== "bench" && <main>
         <section className="panel chat">
           <h2>💬 Conversation</h2>
           <div className="scroll">
             {(chat[sel] ?? []).map((c) => (
               <div key={c.id} className={`bubble ${c.role}`}>
                 {c.meta && <div className="meta">{c.meta}</div>}
-                {c.role === "assistant" || c.role === "draft"
+                {c.role === "jev" && c.event ? <JevCard e={c.event} />
+                  : c.role === "assistant" || c.role === "draft"
                   ? <Markdown text={c.text} />
                   : <div className="text">{c.text}</div>}
                 {c.role === "approval" && c.wfId && !decidedIds.current.has(c.wfId) && (
@@ -263,7 +285,7 @@ export default function App() {
             <div ref={eventsEnd} />
           </div>
         </section>
-      </main>
+      </main>}
     </div>
   );
 }
@@ -272,7 +294,10 @@ function EventRow({ e }: { e: AgentEvent }) {
   const [open, setOpen] = useState(false);
   const { ts, type, workflow, ...detail } = e;
   const tone = EVENT_TONE[type] ?? "grey";
-  const summary = detail.name ? String(detail.name)
+  const summary = detail.purpose ? String(detail.purpose)
+    : type === "jev.triaged" ? `${detail.item_id} → ${detail.category}`
+    : type === "jev.gate" ? `${detail.item_id}: ${detail.verdict}`
+    : detail.name ? String(detail.name)
     : detail.agent ? String(detail.agent)
     : detail.to ? `→ ${detail.to}`
     : detail.action ? String(detail.action)
@@ -289,4 +314,66 @@ function EventRow({ e }: { e: AgentEvent }) {
         <pre className="edetail">{JSON.stringify(detail, null, 2)}</pre>)}
     </div>
   );
+}
+
+// ---------- Jev cards: what Jev returned, and what CODE decided from it ----------
+const pct = (p: number) => `${Math.round(p * 100)}%`;
+function Bar({ p, strong, bad }: { p: number; strong?: boolean; bad?: boolean }) {
+  return (
+    <span className="jbar"><span className={`jfill ${strong ? "strong" : ""} ${bad ? "bad" : ""}`}
+      style={{ width: pct(p) }} /></span>);
+}
+
+function JevCard({ e }: { e: AgentEvent }) {
+  if (e.type === "jev.answered") {
+    const answers = e.answers as Record<string, any>;
+    const usage = e.usage as { input_tokens: number; output_tokens: number } | undefined;
+    return (
+      <div className="jev">
+        <div className="jhead">⚡ <b>Jev returned</b> · {String(e.purpose)}
+          <span className="jstats">{String(e.latency_ms)} ms
+            {usage && ` · ${usage.input_tokens}→${usage.output_tokens} tok`}</span></div>
+        {Object.entries(answers).map(([qid, a]) => (
+          <div key={qid} className="jq">
+            <div className="jqid"><code>{qid}</code> <span className="jtype">{a.type}</span>
+              {a.type === "choice" && <span className="jconf">confidence {pct(a.confidence)}</span>}</div>
+            {a.type === "choice" && Object.entries(a.probabilities as Record<string, number>)
+              .sort((x, y) => y[1] - x[1]).map(([opt, p]) => (
+                <div key={opt} className={`jrow ${opt === a.choice ? "chosen" : ""}`}>
+                  <span className="jlabel">{opt === a.choice ? "▸ " : ""}{opt}</span>
+                  <Bar p={p} strong={opt === a.choice} /><span className="jp">{pct(p)}</span>
+                </div>))}
+            {a.type === "noul" && (
+              <div className="jrow"><span className="jlabel">P(yes)</span>
+                <Bar p={a.noul} strong={a.noul >= 0.5} /><span className="jp">{pct(a.noul)}</span></div>)}
+            {a.type === "score" && (
+              <div className="jrow"><span className="jlabel">score</span>
+                <span className="jp">{Number(a.score).toFixed(2)}</span></div>)}
+          </div>))}
+      </div>);
+  }
+  if (e.type === "jev.triaged") {
+    const arts = e.articles as { topic: string; p: number }[];
+    return (
+      <div className="jev decision">
+        <div className="jhead">🏷 <b>Code decided</b> · triage {String(e.item_id)}</div>
+        <div>category <b>{String(e.category)}</b> ({pct(Number(e.confidence))} confident
+          {e.low_confidence ? <span className="warn"> — below {pct(Number(e.low_confidence_below))}, flagged LOW</span> : ""})</div>
+        <div>KB articles (P ≥ {pct(Number(e.article_threshold))}): {arts.length
+          ? arts.map((a) => `${a.topic} ${pct(a.p)}`).join(", ") : <i>none — reply will defer to a specialist</i>}</div>
+        <div className="jnote">→ handed to the LLM as context; it only writes the reply.</div>
+      </div>);
+  }
+  // jev.gate
+  const pass = e.verdict === "pass";
+  return (
+    <div className={`jev decision ${pass ? "pass" : "blocked"}`}>
+      <div className="jhead">🛡 <b>Code decided</b> · sendReply {String(e.item_id)}:
+        <b className="jverdict"> {pass ? "SEND" : "BLOCKED"}</b></div>
+      <div className="jrow"><span className="jlabel">grounded</span>
+        <Bar p={Number(e.grounded)} strong bad={Number(e.grounded) < Number(e.threshold)} /><span className="jp">{pct(Number(e.grounded))}</span></div>
+      <div className="jrow"><span className="jlabel">on_topic</span>
+        <Bar p={Number(e.on_topic)} strong bad={Number(e.on_topic) < Number(e.threshold)} /><span className="jp">{pct(Number(e.on_topic))}</span></div>
+      <div className="jnote">both must be ≥ {pct(Number(e.threshold))}{pass ? "" : ` — ${e.reason}; the LLM gets the reason and redrafts`}</div>
+    </div>);
 }

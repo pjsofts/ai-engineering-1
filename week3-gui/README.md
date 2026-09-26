@@ -46,6 +46,18 @@ During development, `npm run start` (server) plus `cd client && npm run dev`
   Untick it, press **Resume** → status goes `recovering`, cached steps replay
   instantly with no new tool events, and the workflow finishes. The event
   stream is the proof: no tool is requested twice.
+- **Part 2+ (Durable + Jev):** needs `TYPESAFE_API_KEY` in
+  `../week3-workshop/.env`. Press **Run** → before the LLM starts, one Jev call
+  per item returns a category plus P(relevant) for each KB article (teal
+  *Jev returned* cards), and code turns those into a triage (*Code decided*).
+  The LLM only drafts and sends; before every `sendReply`, Jev scores the
+  draft as `grounded` and `on_topic`, and code sends or blocks it (🛡 card).
+  Crash + Resume replays the cached Jev answers: no new `jev.*` events.
+- **📊 Jev benchmark tab:** runs the hand-labelled cases in
+  `part2-jev/bench/dataset.ts` through Jev and through gpt-4o-mini, asking both
+  the same questions. Shows latency (median/p95), accuracy per job, a Jev
+  threshold sweep, and every miss side by side. CLI: `npm run part2jev:bench`
+  in the workshop folder. Deep-link: `http://127.0.0.1:3377/?tab=bench`.
 - **Part 6 (chaos):** tick *kill the technical investigator*, press **Run** →
   `plan.created`, three `subagent.started` together, one red `subagent.failed`,
   and a complete synthesized reply anyway.

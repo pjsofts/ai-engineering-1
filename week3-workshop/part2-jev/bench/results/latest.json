@@ -1,0 +1,2626 @@
+{
+  "ran_at": "2026-09-26T17:11:45.126Z",
+  "systems": [
+    "jev",
+    "llm"
+  ],
+  "concurrency": 4,
+  "llm_model": "gpt-4o-mini",
+  "jev_model": "jev-latest",
+  "thresholds": {
+    "article": 0.5,
+    "gate": 0.5
+  },
+  "n": {
+    "triage": 30,
+    "verify": 24
+  },
+  "summary": {
+    "jev": {
+      "accuracy": {
+        "category": 1,
+        "articles_exact": 0.9666666666666667,
+        "articles_precision": 0.9444444444444444,
+        "articles_recall": 1,
+        "grounded": 0.9166666666666666,
+        "on_topic": 0.8333333333333334,
+        "gate_decision": 0.9166666666666666,
+        "bad_drafts_caught": 1,
+        "good_drafts_passed": 0.7777777777777778
+      },
+      "latency_ms": {
+        "triage": {
+          "p50": 287,
+          "p95": 402,
+          "mean": 301,
+          "max": 406
+        },
+        "verify": {
+          "p50": 297,
+          "p95": 355,
+          "mean": 299,
+          "max": 363
+        },
+        "all": {
+          "p50": 293,
+          "p95": 377,
+          "mean": 300,
+          "max": 406
+        }
+      },
+      "tokens": {
+        "triage": 949.5666666666667,
+        "verify": 545.0416666666666
+      }
+    },
+    "llm": {
+      "accuracy": {
+        "category": 0.9666666666666667,
+        "articles_exact": 0.9,
+        "articles_precision": 0.85,
+        "articles_recall": 1,
+        "grounded": 0.875,
+        "on_topic": 0.9583333333333334,
+        "gate_decision": 0.9166666666666666,
+        "bad_drafts_caught": 0.9333333333333333,
+        "good_drafts_passed": 0.8888888888888888
+      },
+      "latency_ms": {
+        "triage": {
+          "p50": 799,
+          "p95": 1176,
+          "mean": 862,
+          "max": 1311
+        },
+        "verify": {
+          "p50": 705,
+          "p95": 938,
+          "mean": 721,
+          "max": 986
+        },
+        "all": {
+          "p50": 784,
+          "p95": 1106,
+          "mean": 799,
+          "max": 1311
+        }
+      },
+      "tokens": {
+        "triage": 618.2,
+        "verify": 308.875
+      }
+    }
+  },
+  "sweep": [
+    {
+      "threshold": 0.1,
+      "articles_exact": 0.8,
+      "gate_decision": 0.9583333333333334,
+      "bad_drafts_caught": 0.9333333333333333,
+      "good_drafts_passed": 1
+    },
+    {
+      "threshold": 0.2,
+      "articles_exact": 0.9666666666666667,
+      "gate_decision": 1,
+      "bad_drafts_caught": 1,
+      "good_drafts_passed": 1
+    },
+    {
+      "threshold": 0.3,
+      "articles_exact": 0.9666666666666667,
+      "gate_decision": 0.9583333333333334,
+      "bad_drafts_caught": 1,
+      "good_drafts_passed": 0.8888888888888888
+    },
+    {
+      "threshold": 0.4,
+      "articles_exact": 0.9666666666666667,
+      "gate_decision": 0.9166666666666666,
+      "bad_drafts_caught": 1,
+      "good_drafts_passed": 0.7777777777777778
+    },
+    {
+      "threshold": 0.5,
+      "articles_exact": 0.9666666666666667,
+      "gate_decision": 0.9166666666666666,
+      "bad_drafts_caught": 1,
+      "good_drafts_passed": 0.7777777777777778
+    },
+    {
+      "threshold": 0.6,
+      "articles_exact": 0.9666666666666667,
+      "gate_decision": 0.9166666666666666,
+      "bad_drafts_caught": 1,
+      "good_drafts_passed": 0.7777777777777778
+    },
+    {
+      "threshold": 0.7,
+      "articles_exact": 1,
+      "gate_decision": 0.9166666666666666,
+      "bad_drafts_caught": 1,
+      "good_drafts_passed": 0.7777777777777778
+    },
+    {
+      "threshold": 0.8,
+      "articles_exact": 1,
+      "gate_decision": 0.9166666666666666,
+      "bad_drafts_caught": 1,
+      "good_drafts_passed": 0.7777777777777778
+    },
+    {
+      "threshold": 0.9,
+      "articles_exact": 0.9666666666666667,
+      "gate_decision": 0.8333333333333334,
+      "bad_drafts_caught": 1,
+      "good_drafts_passed": 0.5555555555555556
+    }
+  ],
+  "brier": {
+    "articles": 0.005655140186915876,
+    "gate": 0.09037083333333333
+  },
+  "cases": {
+    "triage": [
+      {
+        "id": "t01",
+        "text": "I was charged twice this month.",
+        "category": "billing",
+        "need": [
+          "billing"
+        ],
+        "ok": [
+          "refund"
+        ],
+        "tag": "plain",
+        "results": {
+          "jev": {
+            "category": "billing",
+            "category_ok": true,
+            "picked": [
+              "billing",
+              "refund"
+            ],
+            "tp": 1,
+            "fp": 0,
+            "fn": 0,
+            "articles_ok": true,
+            "answers": {
+              "category": "billing",
+              "kb_billing": 0.98,
+              "kb_refund": 0.82,
+              "kb_export": 0.02,
+              "kb_pricing": 0.04
+            },
+            "latency_ms": 287
+          },
+          "llm": {
+            "category": "billing",
+            "category_ok": true,
+            "picked": [
+              "billing",
+              "refund"
+            ],
+            "tp": 1,
+            "fp": 0,
+            "fn": 0,
+            "articles_ok": true,
+            "answers": {
+              "category": "billing",
+              "kb_billing": 1,
+              "kb_refund": 1,
+              "kb_export": 0,
+              "kb_pricing": 0
+            },
+            "latency_ms": 1106
+          }
+        }
+      },
+      {
+        "id": "t02",
+        "text": "My card got billed $40 but my plan is $20, what happened?",
+        "category": "billing",
+        "need": [
+          "billing"
+        ],
+        "ok": [
+          "refund"
+        ],
+        "tag": "paraphrase",
+        "results": {
+          "jev": {
+            "category": "billing",
+            "category_ok": true,
+            "picked": [
+              "billing",
+              "refund",
+              "pricing"
+            ],
+            "tp": 1,
+            "fp": 1,
+            "fn": 0,
+            "articles_ok": false,
+            "answers": {
+              "category": "billing",
+              "kb_billing": 0.87,
+              "kb_refund": 0.54,
+              "kb_export": 0.02,
+              "kb_pricing": 0.66
+            },
+            "latency_ms": 402
+          },
+          "llm": {
+            "category": "billing",
+            "category_ok": true,
+            "picked": [
+              "billing",
+              "refund"
+            ],
+            "tp": 1,
+            "fp": 0,
+            "fn": 0,
+            "articles_ok": true,
+            "answers": {
+              "category": "billing",
+              "kb_billing": 1,
+              "kb_refund": 1,
+              "kb_export": 0,
+              "kb_pricing": 0
+            },
+            "latency_ms": 1089
+          }
+        }
+      },
+      {
+        "id": "t03",
+        "text": "Where can I download last month's invoice?",
+        "category": "billing",
+        "need": [],
+        "ok": [
+          "billing"
+        ],
+        "tag": "no article fits",
+        "results": {
+          "jev": {
+            "category": "billing",
+            "category_ok": true,
+            "picked": [],
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "articles_ok": true,
+            "answers": {
+              "category": "billing",
+              "kb_billing": 0.02,
+              "kb_refund": 0.02,
+              "kb_export": 0.03,
+              "kb_pricing": 0.03
+            },
+            "latency_ms": 406
+          },
+          "llm": {
+            "category": "billing",
+            "category_ok": true,
+            "picked": [
+              "billing"
+            ],
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "articles_ok": true,
+            "answers": {
+              "category": "billing",
+              "kb_billing": 1,
+              "kb_refund": 0,
+              "kb_export": 0,
+              "kb_pricing": 0
+            },
+            "latency_ms": 1311
+          }
+        }
+      },
+      {
+        "id": "t04",
+        "text": "I want a refund for the annual plan I bought yesterday.",
+        "category": "billing",
+        "need": [
+          "refund"
+        ],
+        "ok": [
+          "billing"
+        ],
+        "tag": "plain",
+        "results": {
+          "jev": {
+            "category": "billing",
+            "category_ok": true,
+            "picked": [
+              "refund"
+            ],
+            "tp": 1,
+            "fp": 0,
+            "fn": 0,
+            "articles_ok": true,
+            "answers": {
+              "category": "billing",
+              "kb_billing": 0.08,
+              "kb_refund": 0.94,
+              "kb_export": 0.02,
+              "kb_pricing": 0.05
+            },
+            "latency_ms": 377
+          },
+          "llm": {
+            "category": "billing",
+            "category_ok": true,
+            "picked": [
+              "billing",
+              "refund"
+            ],
+            "tp": 1,
+            "fp": 0,
+            "fn": 0,
+            "articles_ok": true,
+            "answers": {
+              "category": "billing",
+              "kb_billing": 1,
+              "kb_refund": 1,
+              "kb_export": 0,
+              "kb_pricing": 0
+            },
+            "latency_ms": 931
+          }
+        }
+      },
+      {
+        "id": "t05",
+        "text": "When will my refund show up? It's been a week.",
+        "category": "billing",
+        "need": [
+          "refund"
+        ],
+        "tag": "plain",
+        "results": {
+          "jev": {
+            "category": "billing",
+            "category_ok": true,
+            "picked": [
+              "refund"
+            ],
+            "tp": 1,
+            "fp": 0,
+            "fn": 0,
+            "articles_ok": true,
+            "answers": {
+              "category": "billing",
+              "kb_billing": 0.11,
+              "kb_refund": 0.98,
+              "kb_export": 0.02,
+              "kb_pricing": 0.02
+            },
+            "latency_ms": 284
+          },
+          "llm": {
+            "category": "billing",
+            "category_ok": true,
+            "picked": [
+              "refund"
+            ],
+            "tp": 1,
+            "fp": 0,
+            "fn": 0,
+            "articles_ok": true,
+            "answers": {
+              "category": "billing",
+              "kb_billing": 0,
+              "kb_refund": 1,
+              "kb_export": 0,
+              "kb_pricing": 0
+            },
+            "latency_ms": 895
+          }
+        }
+      },
+      {
+        "id": "t06",
+        "text": "Two identical pending charges on my statement from you guys",
+        "category": "billing",
+        "need": [
+          "billing"
+        ],
+        "ok": [
+          "refund"
+        ],
+        "tag": "paraphrase",
+        "results": {
+          "jev": {
+            "category": "billing",
+            "category_ok": true,
+            "picked": [
+              "billing"
+            ],
+            "tp": 1,
+            "fp": 0,
+            "fn": 0,
+            "articles_ok": true,
+            "answers": {
+              "category": "billing",
+              "kb_billing": 0.97,
+              "kb_refund": 0.42,
+              "kb_export": 0.02,
+              "kb_pricing": 0.03
+            },
+            "latency_ms": 308
+          },
+          "llm": {
+            "category": "billing",
+            "category_ok": true,
+            "picked": [
+              "billing",
+              "refund"
+            ],
+            "tp": 1,
+            "fp": 0,
+            "fn": 0,
+            "articles_ok": true,
+            "answers": {
+              "category": "billing",
+              "kb_billing": 1,
+              "kb_refund": 1,
+              "kb_export": 0,
+              "kb_pricing": 0
+            },
+            "latency_ms": 928
+          }
+        }
+      },
+      {
+        "id": "t07",
+        "text": "Ich wurde diesen Monat zweimal belastet, bitte helfen Sie mir.",
+        "category": "billing",
+        "need": [
+          "billing"
+        ],
+        "ok": [
+          "refund"
+        ],
+        "tag": "non-English",
+        "results": {
+          "jev": {
+            "category": "billing",
+            "category_ok": true,
+            "picked": [
+              "billing",
+              "refund"
+            ],
+            "tp": 1,
+            "fp": 0,
+            "fn": 0,
+            "articles_ok": true,
+            "answers": {
+              "category": "billing",
+              "kb_billing": 0.97,
+              "kb_refund": 0.8,
+              "kb_export": 0.02,
+              "kb_pricing": 0.04
+            },
+            "latency_ms": 278
+          },
+          "llm": {
+            "category": "billing",
+            "category_ok": true,
+            "picked": [
+              "billing",
+              "refund"
+            ],
+            "tp": 1,
+            "fp": 0,
+            "fn": 0,
+            "articles_ok": true,
+            "answers": {
+              "category": "billing",
+              "kb_billing": 1,
+              "kb_refund": 1,
+              "kb_export": 0,
+              "kb_pricing": 0
+            },
+            "latency_ms": 865
+          }
+        }
+      },
+      {
+        "id": "t08",
+        "text": "Cancel my subscription and stop charging me",
+        "category": "billing",
+        "need": [],
+        "ok": [
+          "billing",
+          "refund"
+        ],
+        "tag": "no article fits",
+        "results": {
+          "jev": {
+            "category": "billing",
+            "category_ok": true,
+            "picked": [],
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "articles_ok": true,
+            "answers": {
+              "category": "billing",
+              "kb_billing": 0.07,
+              "kb_refund": 0.19,
+              "kb_export": 0.02,
+              "kb_pricing": 0.07
+            },
+            "latency_ms": 274
+          },
+          "llm": {
+            "category": "billing",
+            "category_ok": true,
+            "picked": [
+              "billing",
+              "refund"
+            ],
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "articles_ok": true,
+            "answers": {
+              "category": "billing",
+              "kb_billing": 1,
+              "kb_refund": 1,
+              "kb_export": 0,
+              "kb_pricing": 0
+            },
+            "latency_ms": 844
+          }
+        }
+      },
+      {
+        "id": "t09",
+        "text": "lol got billed 2x again 🙃",
+        "category": "billing",
+        "need": [
+          "billing"
+        ],
+        "ok": [
+          "refund"
+        ],
+        "tag": "slang",
+        "results": {
+          "jev": {
+            "category": "billing",
+            "category_ok": true,
+            "picked": [
+              "billing",
+              "refund"
+            ],
+            "tp": 1,
+            "fp": 0,
+            "fn": 0,
+            "articles_ok": true,
+            "answers": {
+              "category": "billing",
+              "kb_billing": 0.97,
+              "kb_refund": 0.78,
+              "kb_export": 0.02,
+              "kb_pricing": 0.04
+            },
+            "latency_ms": 301
+          },
+          "llm": {
+            "category": "billing",
+            "category_ok": true,
+            "picked": [
+              "billing",
+              "refund"
+            ],
+            "tp": 1,
+            "fp": 0,
+            "fn": 0,
+            "articles_ok": true,
+            "answers": {
+              "category": "billing",
+              "kb_billing": 1,
+              "kb_refund": 1,
+              "kb_export": 0,
+              "kb_pricing": 0
+            },
+            "latency_ms": 759
+          }
+        }
+      },
+      {
+        "id": "t10",
+        "text": "The export button fails on Safari.",
+        "category": "technical",
+        "need": [
+          "export"
+        ],
+        "tag": "plain",
+        "results": {
+          "jev": {
+            "category": "technical",
+            "category_ok": true,
+            "picked": [
+              "export"
+            ],
+            "tp": 1,
+            "fp": 0,
+            "fn": 0,
+            "articles_ok": true,
+            "answers": {
+              "category": "technical",
+              "kb_billing": 0.02,
+              "kb_refund": 0.02,
+              "kb_export": 0.98,
+              "kb_pricing": 0.02
+            },
+            "latency_ms": 283
+          },
+          "llm": {
+            "category": "technical",
+            "category_ok": true,
+            "picked": [
+              "export"
+            ],
+            "tp": 1,
+            "fp": 0,
+            "fn": 0,
+            "articles_ok": true,
+            "answers": {
+              "category": "technical",
+              "kb_billing": 0,
+              "kb_refund": 0,
+              "kb_export": 1,
+              "kb_pricing": 0
+            },
+            "latency_ms": 784
+          }
+        }
+      },
+      {
+        "id": "t11",
+        "text": "Exporting a report on my Mac in Safari just spins forever",
+        "category": "technical",
+        "need": [
+          "export"
+        ],
+        "tag": "paraphrase",
+        "results": {
+          "jev": {
+            "category": "technical",
+            "category_ok": true,
+            "picked": [
+              "export"
+            ],
+            "tp": 1,
+            "fp": 0,
+            "fn": 0,
+            "articles_ok": true,
+            "answers": {
+              "category": "technical",
+              "kb_billing": 0.02,
+              "kb_refund": 0.02,
+              "kb_export": 0.98,
+              "kb_pricing": 0.02
+            },
+            "latency_ms": 321
+          },
+          "llm": {
+            "category": "technical",
+            "category_ok": true,
+            "picked": [
+              "export"
+            ],
+            "tp": 1,
+            "fp": 0,
+            "fn": 0,
+            "articles_ok": true,
+            "answers": {
+              "category": "technical",
+              "kb_billing": 0,
+              "kb_refund": 0,
+              "kb_export": 1,
+              "kb_pricing": 0
+            },
+            "latency_ms": 1176
+          }
+        }
+      },
+      {
+        "id": "t12",
+        "text": "The 'Download data' button does nothing when I use Safari",
+        "category": "technical",
+        "need": [
+          "export"
+        ],
+        "tag": "no keyword",
+        "results": {
+          "jev": {
+            "category": "technical",
+            "category_ok": true,
+            "picked": [
+              "export"
+            ],
+            "tp": 1,
+            "fp": 0,
+            "fn": 0,
+            "articles_ok": true,
+            "answers": {
+              "category": "technical",
+              "kb_billing": 0.02,
+              "kb_refund": 0.02,
+              "kb_export": 0.95,
+              "kb_pricing": 0.02
+            },
+            "latency_ms": 272
+          },
+          "llm": {
+            "category": "technical",
+            "category_ok": true,
+            "picked": [
+              "export"
+            ],
+            "tp": 1,
+            "fp": 0,
+            "fn": 0,
+            "articles_ok": true,
+            "answers": {
+              "category": "technical",
+              "kb_billing": 0,
+              "kb_refund": 0,
+              "kb_export": 1,
+              "kb_pricing": 0
+            },
+            "latency_ms": 924
+          }
+        }
+      },
+      {
+        "id": "t13",
+        "text": "I can't log in, it says invalid token.",
+        "category": "technical",
+        "need": [],
+        "tag": "no article fits",
+        "results": {
+          "jev": {
+            "category": "technical",
+            "category_ok": true,
+            "picked": [],
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "articles_ok": true,
+            "answers": {
+              "category": "technical",
+              "kb_billing": 0.02,
+              "kb_refund": 0.02,
+              "kb_export": 0.02,
+              "kb_pricing": 0.02
+            },
+            "latency_ms": 296
+          },
+          "llm": {
+            "category": "technical",
+            "category_ok": true,
+            "picked": [],
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "articles_ok": true,
+            "answers": {
+              "category": "technical",
+              "kb_billing": 0,
+              "kb_refund": 0,
+              "kb_export": 0,
+              "kb_pricing": 0
+            },
+            "latency_ms": 791
+          }
+        }
+      },
+      {
+        "id": "t14",
+        "text": "The dashboard charts are blank since this morning's update",
+        "category": "technical",
+        "need": [],
+        "tag": "no article fits",
+        "results": {
+          "jev": {
+            "category": "technical",
+            "category_ok": true,
+            "picked": [],
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "articles_ok": true,
+            "answers": {
+              "category": "technical",
+              "kb_billing": 0.02,
+              "kb_refund": 0.02,
+              "kb_export": 0.03,
+              "kb_pricing": 0.02
+            },
+            "latency_ms": 280
+          },
+          "llm": {
+            "category": "technical",
+            "category_ok": true,
+            "picked": [
+              "export"
+            ],
+            "tp": 0,
+            "fp": 1,
+            "fn": 0,
+            "articles_ok": false,
+            "answers": {
+              "category": "technical",
+              "kb_billing": 0,
+              "kb_refund": 0,
+              "kb_export": 1,
+              "kb_pricing": 0
+            },
+            "latency_ms": 731
+          }
+        }
+      },
+      {
+        "id": "t15",
+        "text": "App crashes when I upload a 2GB file",
+        "category": "technical",
+        "need": [],
+        "tag": "no article fits",
+        "results": {
+          "jev": {
+            "category": "technical",
+            "category_ok": true,
+            "picked": [],
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "articles_ok": true,
+            "answers": {
+              "category": "technical",
+              "kb_billing": 0.02,
+              "kb_refund": 0.02,
+              "kb_export": 0.03,
+              "kb_pricing": 0.02
+            },
+            "latency_ms": 325
+          },
+          "llm": {
+            "category": "technical",
+            "category_ok": true,
+            "picked": [],
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "articles_ok": true,
+            "answers": {
+              "category": "technical",
+              "kb_billing": 0,
+              "kb_refund": 0,
+              "kb_export": 0,
+              "kb_pricing": 0
+            },
+            "latency_ms": 776
+          }
+        }
+      },
+      {
+        "id": "t16",
+        "text": "Your pricing page won't load in Safari, it's just a white screen",
+        "category": "technical",
+        "need": [],
+        "ok": [
+          "pricing"
+        ],
+        "tag": "keyword trap",
+        "results": {
+          "jev": {
+            "category": "technical",
+            "category_ok": true,
+            "picked": [],
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "articles_ok": true,
+            "answers": {
+              "category": "technical",
+              "kb_billing": 0.02,
+              "kb_refund": 0.02,
+              "kb_export": 0.14,
+              "kb_pricing": 0.05
+            },
+            "latency_ms": 261
+          },
+          "llm": {
+            "category": "technical",
+            "category_ok": true,
+            "picked": [
+              "export"
+            ],
+            "tp": 0,
+            "fp": 1,
+            "fn": 0,
+            "articles_ok": false,
+            "answers": {
+              "category": "technical",
+              "kb_billing": 0,
+              "kb_refund": 0,
+              "kb_export": 1,
+              "kb_pricing": 0
+            },
+            "latency_ms": 782
+          }
+        }
+      },
+      {
+        "id": "t17",
+        "text": "Refunds are fine, I don't need one. I just need export to work in Safari.",
+        "category": "technical",
+        "alsoOk": [
+          "billing"
+        ],
+        "need": [
+          "export"
+        ],
+        "tag": "negation",
+        "results": {
+          "jev": {
+            "category": "technical",
+            "category_ok": true,
+            "picked": [
+              "export"
+            ],
+            "tp": 1,
+            "fp": 0,
+            "fn": 0,
+            "articles_ok": true,
+            "answers": {
+              "category": "technical",
+              "kb_billing": 0.07,
+              "kb_refund": 0.1,
+              "kb_export": 0.98,
+              "kb_pricing": 0.02
+            },
+            "latency_ms": 300
+          },
+          "llm": {
+            "category": "technical",
+            "category_ok": true,
+            "picked": [
+              "export"
+            ],
+            "tp": 1,
+            "fp": 0,
+            "fn": 0,
+            "articles_ok": true,
+            "answers": {
+              "category": "technical",
+              "kb_billing": 0,
+              "kb_refund": 0,
+              "kb_export": 1,
+              "kb_pricing": 0
+            },
+            "latency_ms": 789
+          }
+        }
+      },
+      {
+        "id": "t18",
+        "text": "Can you send pricing for 50 seats?",
+        "category": "sales",
+        "need": [
+          "pricing"
+        ],
+        "tag": "plain",
+        "results": {
+          "jev": {
+            "category": "sales",
+            "category_ok": true,
+            "picked": [
+              "pricing"
+            ],
+            "tp": 1,
+            "fp": 0,
+            "fn": 0,
+            "articles_ok": true,
+            "answers": {
+              "category": "sales",
+              "kb_billing": 0.02,
+              "kb_refund": 0.02,
+              "kb_export": 0.02,
+              "kb_pricing": 0.98
+            },
+            "latency_ms": 274
+          },
+          "llm": {
+            "category": "sales",
+            "category_ok": true,
+            "picked": [
+              "pricing"
+            ],
+            "tp": 1,
+            "fp": 0,
+            "fn": 0,
+            "articles_ok": true,
+            "answers": {
+              "category": "sales",
+              "kb_billing": 0,
+              "kb_refund": 0,
+              "kb_export": 0,
+              "kb_pricing": 1
+            },
+            "latency_ms": 998
+          }
+        }
+      },
+      {
+        "id": "t19",
+        "text": "How much would it cost for a team of 30?",
+        "category": "sales",
+        "need": [
+          "pricing"
+        ],
+        "tag": "paraphrase",
+        "results": {
+          "jev": {
+            "category": "sales",
+            "category_ok": true,
+            "picked": [
+              "pricing"
+            ],
+            "tp": 1,
+            "fp": 0,
+            "fn": 0,
+            "articles_ok": true,
+            "answers": {
+              "category": "sales",
+              "kb_billing": 0.02,
+              "kb_refund": 0.02,
+              "kb_export": 0.02,
+              "kb_pricing": 0.97
+            },
+            "latency_ms": 287
+          },
+          "llm": {
+            "category": "sales",
+            "category_ok": true,
+            "picked": [
+              "pricing"
+            ],
+            "tp": 1,
+            "fp": 0,
+            "fn": 0,
+            "articles_ok": true,
+            "answers": {
+              "category": "sales",
+              "kb_billing": 0,
+              "kb_refund": 0,
+              "kb_export": 0,
+              "kb_pricing": 1
+            },
+            "latency_ms": 781
+          }
+        }
+      },
+      {
+        "id": "t20",
+        "text": "Do you offer discounts for larger teams?",
+        "category": "sales",
+        "need": [
+          "pricing"
+        ],
+        "tag": "paraphrase",
+        "results": {
+          "jev": {
+            "category": "sales",
+            "category_ok": true,
+            "picked": [
+              "pricing"
+            ],
+            "tp": 1,
+            "fp": 0,
+            "fn": 0,
+            "articles_ok": true,
+            "answers": {
+              "category": "sales",
+              "kb_billing": 0.02,
+              "kb_refund": 0.02,
+              "kb_export": 0.02,
+              "kb_pricing": 0.98
+            },
+            "latency_ms": 332
+          },
+          "llm": {
+            "category": "sales",
+            "category_ok": true,
+            "picked": [
+              "pricing"
+            ],
+            "tp": 1,
+            "fp": 0,
+            "fn": 0,
+            "articles_ok": true,
+            "answers": {
+              "category": "sales",
+              "kb_billing": 0,
+              "kb_refund": 0,
+              "kb_export": 0,
+              "kb_pricing": 1
+            },
+            "latency_ms": 982
+          }
+        }
+      },
+      {
+        "id": "t21",
+        "text": "We'd like to go from 10 to 40 seats. What would that run us?",
+        "category": "sales",
+        "alsoOk": [
+          "billing"
+        ],
+        "need": [
+          "pricing"
+        ],
+        "tag": "paraphrase",
+        "results": {
+          "jev": {
+            "category": "sales",
+            "category_ok": true,
+            "picked": [
+              "pricing"
+            ],
+            "tp": 1,
+            "fp": 0,
+            "fn": 0,
+            "articles_ok": true,
+            "answers": {
+              "category": "sales",
+              "kb_billing": 0.03,
+              "kb_refund": 0.03,
+              "kb_export": 0.02,
+              "kb_pricing": 0.97
+            },
+            "latency_ms": 294
+          },
+          "llm": {
+            "category": "sales",
+            "category_ok": true,
+            "picked": [
+              "pricing"
+            ],
+            "tp": 1,
+            "fp": 0,
+            "fn": 0,
+            "articles_ok": true,
+            "answers": {
+              "category": "sales",
+              "kb_billing": 0,
+              "kb_refund": 0,
+              "kb_export": 0,
+              "kb_pricing": 1
+            },
+            "latency_ms": 805
+          }
+        }
+      },
+      {
+        "id": "t22",
+        "text": "Can we get a formal quote for our procurement team?",
+        "category": "sales",
+        "need": [],
+        "ok": [
+          "pricing"
+        ],
+        "tag": "plain",
+        "results": {
+          "jev": {
+            "category": "sales",
+            "category_ok": true,
+            "picked": [
+              "pricing"
+            ],
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "articles_ok": true,
+            "answers": {
+              "category": "sales",
+              "kb_billing": 0.02,
+              "kb_refund": 0.03,
+              "kb_export": 0.02,
+              "kb_pricing": 0.89
+            },
+            "latency_ms": 272
+          },
+          "llm": {
+            "category": "sales",
+            "category_ok": true,
+            "picked": [
+              "pricing"
+            ],
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "articles_ok": true,
+            "answers": {
+              "category": "sales",
+              "kb_billing": 0,
+              "kb_refund": 0,
+              "kb_export": 0,
+              "kb_pricing": 1
+            },
+            "latency_ms": 732
+          }
+        }
+      },
+      {
+        "id": "t23",
+        "text": "Is there an enterprise plan with SSO?",
+        "category": "sales",
+        "need": [],
+        "ok": [
+          "pricing"
+        ],
+        "tag": "no article fits",
+        "results": {
+          "jev": {
+            "category": "sales",
+            "category_ok": true,
+            "picked": [],
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "articles_ok": true,
+            "answers": {
+              "category": "sales",
+              "kb_billing": 0.02,
+              "kb_refund": 0.02,
+              "kb_export": 0.02,
+              "kb_pricing": 0.21
+            },
+            "latency_ms": 332
+          },
+          "llm": {
+            "category": "sales",
+            "category_ok": true,
+            "picked": [
+              "pricing"
+            ],
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "articles_ok": true,
+            "answers": {
+              "category": "sales",
+              "kb_billing": 0,
+              "kb_refund": 0,
+              "kb_export": 0,
+              "kb_pricing": 1
+            },
+            "latency_ms": 799
+          }
+        }
+      },
+      {
+        "id": "t24",
+        "text": "Not a bug report, just curious: what does one seat cost?",
+        "category": "sales",
+        "need": [
+          "pricing"
+        ],
+        "tag": "negation",
+        "results": {
+          "jev": {
+            "category": "sales",
+            "category_ok": true,
+            "picked": [
+              "pricing"
+            ],
+            "tp": 1,
+            "fp": 0,
+            "fn": 0,
+            "articles_ok": true,
+            "answers": {
+              "category": "sales",
+              "kb_billing": 0.03,
+              "kb_refund": 0.02,
+              "kb_export": 0.02,
+              "kb_pricing": 0.98
+            },
+            "latency_ms": 258
+          },
+          "llm": {
+            "category": "sales",
+            "category_ok": true,
+            "picked": [
+              "pricing"
+            ],
+            "tp": 1,
+            "fp": 0,
+            "fn": 0,
+            "articles_ok": true,
+            "answers": {
+              "category": "sales",
+              "kb_billing": 0,
+              "kb_refund": 0,
+              "kb_export": 0,
+              "kb_pricing": 1
+            },
+            "latency_ms": 835
+          }
+        }
+      },
+      {
+        "id": "t25",
+        "text": "¿Cuánto cuesta el plan de equipo por usuario?",
+        "category": "sales",
+        "need": [
+          "pricing"
+        ],
+        "tag": "non-English",
+        "results": {
+          "jev": {
+            "category": "sales",
+            "category_ok": true,
+            "picked": [
+              "pricing"
+            ],
+            "tp": 1,
+            "fp": 0,
+            "fn": 0,
+            "articles_ok": true,
+            "answers": {
+              "category": "sales",
+              "kb_billing": 0.02,
+              "kb_refund": 0.02,
+              "kb_export": 0.02,
+              "kb_pricing": 0.98
+            },
+            "latency_ms": 268
+          },
+          "llm": {
+            "category": "sales",
+            "category_ok": true,
+            "picked": [
+              "pricing"
+            ],
+            "tp": 1,
+            "fp": 0,
+            "fn": 0,
+            "articles_ok": true,
+            "answers": {
+              "category": "sales",
+              "kb_billing": 0,
+              "kb_refund": 0,
+              "kb_export": 0,
+              "kb_pricing": 1
+            },
+            "latency_ms": 711
+          }
+        }
+      },
+      {
+        "id": "t26",
+        "text": "Just wanted to say your product is great!",
+        "category": "other",
+        "need": [],
+        "tag": "plain",
+        "results": {
+          "jev": {
+            "category": "other",
+            "category_ok": true,
+            "picked": [],
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "articles_ok": true,
+            "answers": {
+              "category": "other",
+              "kb_billing": 0.03,
+              "kb_refund": 0.03,
+              "kb_export": 0.02,
+              "kb_pricing": 0.04
+            },
+            "latency_ms": 272
+          },
+          "llm": {
+            "category": "other",
+            "category_ok": true,
+            "picked": [],
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "articles_ok": true,
+            "answers": {
+              "category": "other",
+              "kb_billing": 0,
+              "kb_refund": 0,
+              "kb_export": 0,
+              "kb_pricing": 0
+            },
+            "latency_ms": 750
+          }
+        }
+      },
+      {
+        "id": "t27",
+        "text": "Are you hiring frontend engineers?",
+        "category": "other",
+        "need": [],
+        "tag": "plain",
+        "results": {
+          "jev": {
+            "category": "other",
+            "category_ok": true,
+            "picked": [],
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "articles_ok": true,
+            "answers": {
+              "category": "other",
+              "kb_billing": 0.02,
+              "kb_refund": 0.02,
+              "kb_export": 0.02,
+              "kb_pricing": 0.02
+            },
+            "latency_ms": 316
+          },
+          "llm": {
+            "category": "other",
+            "category_ok": true,
+            "picked": [],
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "articles_ok": true,
+            "answers": {
+              "category": "other",
+              "kb_billing": 0,
+              "kb_refund": 0,
+              "kb_export": 0,
+              "kb_pricing": 0
+            },
+            "latency_ms": 773
+          }
+        }
+      },
+      {
+        "id": "t28",
+        "text": "What's your office address for sending a letter?",
+        "category": "other",
+        "need": [],
+        "tag": "plain",
+        "results": {
+          "jev": {
+            "category": "other",
+            "category_ok": true,
+            "picked": [],
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "articles_ok": true,
+            "answers": {
+              "category": "other",
+              "kb_billing": 0.01,
+              "kb_refund": 0.02,
+              "kb_export": 0.01,
+              "kb_pricing": 0.01
+            },
+            "latency_ms": 271
+          },
+          "llm": {
+            "category": "other",
+            "category_ok": true,
+            "picked": [],
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "articles_ok": true,
+            "answers": {
+              "category": "other",
+              "kb_billing": 0,
+              "kb_refund": 0,
+              "kb_export": 0,
+              "kb_pricing": 0
+            },
+            "latency_ms": 699
+          }
+        }
+      },
+      {
+        "id": "t29",
+        "text": "Can I come on your podcast to talk about data exports?",
+        "category": "other",
+        "need": [],
+        "tag": "keyword trap",
+        "results": {
+          "jev": {
+            "category": "other",
+            "category_ok": true,
+            "picked": [],
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "articles_ok": true,
+            "answers": {
+              "category": "other",
+              "kb_billing": 0.02,
+              "kb_refund": 0.02,
+              "kb_export": 0.17,
+              "kb_pricing": 0.03
+            },
+            "latency_ms": 278
+          },
+          "llm": {
+            "category": "technical",
+            "category_ok": false,
+            "picked": [
+              "export"
+            ],
+            "tp": 0,
+            "fp": 1,
+            "fn": 0,
+            "articles_ok": false,
+            "answers": {
+              "category": "technical",
+              "kb_billing": 0,
+              "kb_refund": 0,
+              "kb_export": 1,
+              "kb_pricing": 0
+            },
+            "latency_ms": 788
+          }
+        }
+      },
+      {
+        "id": "t30",
+        "text": "My friend says you charge too much. Is that true?",
+        "category": "other",
+        "alsoOk": [
+          "sales"
+        ],
+        "need": [],
+        "ok": [
+          "pricing"
+        ],
+        "tag": "keyword trap",
+        "results": {
+          "jev": {
+            "category": "sales",
+            "category_ok": true,
+            "picked": [
+              "pricing"
+            ],
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "articles_ok": true,
+            "answers": {
+              "category": "sales",
+              "kb_billing": 0.1,
+              "kb_refund": 0.06,
+              "kb_export": 0.02,
+              "kb_pricing": 0.9
+            },
+            "latency_ms": 328
+          },
+          "llm": {
+            "category": "sales",
+            "category_ok": true,
+            "picked": [
+              "pricing"
+            ],
+            "tp": 0,
+            "fp": 0,
+            "fn": 0,
+            "articles_ok": true,
+            "answers": {
+              "category": "sales",
+              "kb_billing": 0,
+              "kb_refund": 0,
+              "kb_export": 0,
+              "kb_pricing": 1
+            },
+            "latency_ms": 721
+          }
+        }
+      }
+    ],
+    "verify": [
+      {
+        "id": "v01",
+        "customer": "I was charged twice and need help.",
+        "topics": [
+          "billing",
+          "refund"
+        ],
+        "draft": "Sorry about the double charge! Double charges are usually a duplicate authorization that drops off in 3-5 days. If it has already settled, we'll refund it immediately, and refunds post in 5-10 business days.",
+        "grounded": true,
+        "on_topic": true,
+        "tag": "good",
+        "results": {
+          "jev": {
+            "grounded": true,
+            "on_topic": true,
+            "grounded_ok": true,
+            "on_topic_ok": true,
+            "blocked": false,
+            "should_block": false,
+            "decision_ok": true,
+            "answers": {
+              "grounded": 0.93,
+              "on_topic": 0.96
+            },
+            "latency_ms": 298
+          },
+          "llm": {
+            "grounded": true,
+            "on_topic": true,
+            "grounded_ok": true,
+            "on_topic_ok": true,
+            "blocked": false,
+            "should_block": false,
+            "decision_ok": true,
+            "answers": {
+              "grounded": 1,
+              "on_topic": 1
+            },
+            "latency_ms": 679
+          }
+        }
+      },
+      {
+        "id": "v02",
+        "customer": "I was charged twice and need help.",
+        "topics": [
+          "billing",
+          "refund"
+        ],
+        "draft": "Sorry about that! The duplicate charge will drop off within 24 hours.",
+        "grounded": false,
+        "on_topic": true,
+        "tag": "wrong timeline",
+        "results": {
+          "jev": {
+            "grounded": false,
+            "on_topic": true,
+            "grounded_ok": true,
+            "on_topic_ok": true,
+            "blocked": true,
+            "should_block": true,
+            "decision_ok": true,
+            "answers": {
+              "grounded": 0.03,
+              "on_topic": 0.77
+            },
+            "latency_ms": 298
+          },
+          "llm": {
+            "grounded": false,
+            "on_topic": true,
+            "grounded_ok": true,
+            "on_topic_ok": true,
+            "blocked": true,
+            "should_block": true,
+            "decision_ok": true,
+            "answers": {
+              "grounded": 0,
+              "on_topic": 1
+            },
+            "latency_ms": 637
+          }
+        }
+      },
+      {
+        "id": "v03",
+        "customer": "I was charged twice and need help.",
+        "topics": [
+          "billing",
+          "refund"
+        ],
+        "draft": "Apologies! We've added a $50 credit to your account for the trouble.",
+        "grounded": false,
+        "on_topic": true,
+        "tag": "invented promise",
+        "results": {
+          "jev": {
+            "grounded": false,
+            "on_topic": false,
+            "grounded_ok": true,
+            "on_topic_ok": false,
+            "blocked": true,
+            "should_block": true,
+            "decision_ok": true,
+            "answers": {
+              "grounded": 0.02,
+              "on_topic": 0.09
+            },
+            "latency_ms": 292
+          },
+          "llm": {
+            "grounded": false,
+            "on_topic": true,
+            "grounded_ok": true,
+            "on_topic_ok": true,
+            "blocked": true,
+            "should_block": true,
+            "decision_ok": true,
+            "answers": {
+              "grounded": 0,
+              "on_topic": 1
+            },
+            "latency_ms": 608
+          }
+        }
+      },
+      {
+        "id": "v04",
+        "customer": "I was charged twice and need help.",
+        "topics": [
+          "billing",
+          "refund"
+        ],
+        "draft": "Sorry about that! A billing specialist will look into the double charge and follow up shortly.",
+        "grounded": true,
+        "on_topic": true,
+        "tag": "no facts, courteous",
+        "results": {
+          "jev": {
+            "grounded": false,
+            "on_topic": true,
+            "grounded_ok": false,
+            "on_topic_ok": true,
+            "blocked": true,
+            "should_block": false,
+            "decision_ok": false,
+            "answers": {
+              "grounded": 0.38,
+              "on_topic": 0.87
+            },
+            "latency_ms": 278
+          },
+          "llm": {
+            "grounded": true,
+            "on_topic": true,
+            "grounded_ok": true,
+            "on_topic_ok": true,
+            "blocked": false,
+            "should_block": false,
+            "decision_ok": true,
+            "answers": {
+              "grounded": 1,
+              "on_topic": 1
+            },
+            "latency_ms": 599
+          }
+        }
+      },
+      {
+        "id": "v05",
+        "customer": "I was charged twice and need help.",
+        "topics": [
+          "billing",
+          "refund"
+        ],
+        "draft": "The Safari export failure is a known bug. Please use Chrome instead.",
+        "grounded": false,
+        "on_topic": false,
+        "tag": "wrong item",
+        "results": {
+          "jev": {
+            "grounded": false,
+            "on_topic": false,
+            "grounded_ok": true,
+            "on_topic_ok": true,
+            "blocked": true,
+            "should_block": true,
+            "decision_ok": true,
+            "answers": {
+              "grounded": 0.01,
+              "on_topic": 0.01
+            },
+            "latency_ms": 307
+          },
+          "llm": {
+            "grounded": false,
+            "on_topic": false,
+            "grounded_ok": true,
+            "on_topic_ok": true,
+            "blocked": true,
+            "should_block": true,
+            "decision_ok": true,
+            "answers": {
+              "grounded": 0,
+              "on_topic": 0
+            },
+            "latency_ms": 577
+          }
+        }
+      },
+      {
+        "id": "v06",
+        "customer": "I was charged twice and need help.",
+        "topics": [
+          "billing",
+          "refund"
+        ],
+        "draft": "The duplicate charge is a known bug (TICKET-4412) that engineering is fixing.",
+        "grounded": false,
+        "on_topic": true,
+        "tag": "conflated facts",
+        "results": {
+          "jev": {
+            "grounded": false,
+            "on_topic": false,
+            "grounded_ok": true,
+            "on_topic_ok": false,
+            "blocked": true,
+            "should_block": true,
+            "decision_ok": true,
+            "answers": {
+              "grounded": 0.02,
+              "on_topic": 0.28
+            },
+            "latency_ms": 322
+          },
+          "llm": {
+            "grounded": false,
+            "on_topic": true,
+            "grounded_ok": true,
+            "on_topic_ok": true,
+            "blocked": true,
+            "should_block": true,
+            "decision_ok": true,
+            "answers": {
+              "grounded": 0,
+              "on_topic": 1
+            },
+            "latency_ms": 604
+          }
+        }
+      },
+      {
+        "id": "v07",
+        "customer": "I was charged twice and need help.",
+        "topics": [
+          "billing",
+          "refund"
+        ],
+        "draft": "Double charges always drop off in 3-5 days, so a refund is never needed.",
+        "grounded": false,
+        "on_topic": true,
+        "tag": "contradicts KB",
+        "results": {
+          "jev": {
+            "grounded": false,
+            "on_topic": false,
+            "grounded_ok": true,
+            "on_topic_ok": false,
+            "blocked": true,
+            "should_block": true,
+            "decision_ok": true,
+            "answers": {
+              "grounded": 0.02,
+              "on_topic": 0.47
+            },
+            "latency_ms": 272
+          },
+          "llm": {
+            "grounded": false,
+            "on_topic": false,
+            "grounded_ok": true,
+            "on_topic_ok": false,
+            "blocked": true,
+            "should_block": true,
+            "decision_ok": true,
+            "answers": {
+              "grounded": 0,
+              "on_topic": 0
+            },
+            "latency_ms": 675
+          }
+        }
+      },
+      {
+        "id": "v08",
+        "customer": "Ich wurde zweimal belastet.",
+        "topics": [
+          "billing",
+          "refund"
+        ],
+        "draft": "Sorry about the double charge! Double charges are usually a duplicate authorization that drops off in 3-5 days. If it has already settled, we'll refund it immediately, and refunds post in 5-10 business days.",
+        "grounded": true,
+        "on_topic": true,
+        "tag": "cross-language",
+        "results": {
+          "jev": {
+            "grounded": true,
+            "on_topic": true,
+            "grounded_ok": true,
+            "on_topic_ok": true,
+            "blocked": false,
+            "should_block": false,
+            "decision_ok": true,
+            "answers": {
+              "grounded": 0.91,
+              "on_topic": 0.96
+            },
+            "latency_ms": 283
+          },
+          "llm": {
+            "grounded": true,
+            "on_topic": true,
+            "grounded_ok": true,
+            "on_topic_ok": true,
+            "blocked": false,
+            "should_block": false,
+            "decision_ok": true,
+            "answers": {
+              "grounded": 1,
+              "on_topic": 1
+            },
+            "latency_ms": 717
+          }
+        }
+      },
+      {
+        "id": "v09",
+        "customer": "When will my refund show up?",
+        "topics": [
+          "refund"
+        ],
+        "draft": "Refunds post in 5-10 business days. If you're on a Pro account, we can expedite it.",
+        "grounded": true,
+        "on_topic": true,
+        "tag": "good",
+        "results": {
+          "jev": {
+            "grounded": true,
+            "on_topic": true,
+            "grounded_ok": true,
+            "on_topic_ok": true,
+            "blocked": false,
+            "should_block": false,
+            "decision_ok": true,
+            "answers": {
+              "grounded": 0.94,
+              "on_topic": 0.98
+            },
+            "latency_ms": 355
+          },
+          "llm": {
+            "grounded": true,
+            "on_topic": true,
+            "grounded_ok": true,
+            "on_topic_ok": true,
+            "blocked": false,
+            "should_block": false,
+            "decision_ok": true,
+            "answers": {
+              "grounded": 1,
+              "on_topic": 1
+            },
+            "latency_ms": 804
+          }
+        }
+      },
+      {
+        "id": "v10",
+        "customer": "When will my refund show up?",
+        "topics": [
+          "refund"
+        ],
+        "draft": "Your refund will arrive tomorrow morning.",
+        "grounded": false,
+        "on_topic": true,
+        "tag": "wrong timeline",
+        "results": {
+          "jev": {
+            "grounded": false,
+            "on_topic": true,
+            "grounded_ok": true,
+            "on_topic_ok": true,
+            "blocked": true,
+            "should_block": true,
+            "decision_ok": true,
+            "answers": {
+              "grounded": 0.02,
+              "on_topic": 0.81
+            },
+            "latency_ms": 299
+          },
+          "llm": {
+            "grounded": false,
+            "on_topic": true,
+            "grounded_ok": true,
+            "on_topic_ok": true,
+            "blocked": true,
+            "should_block": true,
+            "decision_ok": true,
+            "answers": {
+              "grounded": 0,
+              "on_topic": 1
+            },
+            "latency_ms": 842
+          }
+        }
+      },
+      {
+        "id": "v11",
+        "customer": "The export button fails on Safari.",
+        "topics": [
+          "export"
+        ],
+        "draft": "Thanks for reporting this! It's a known bug (TICKET-4412). As a workaround, please use Chrome or the CSV export.",
+        "grounded": true,
+        "on_topic": true,
+        "tag": "good",
+        "results": {
+          "jev": {
+            "grounded": true,
+            "on_topic": true,
+            "grounded_ok": true,
+            "on_topic_ok": true,
+            "blocked": false,
+            "should_block": false,
+            "decision_ok": true,
+            "answers": {
+              "grounded": 0.98,
+              "on_topic": 0.97
+            },
+            "latency_ms": 308
+          },
+          "llm": {
+            "grounded": true,
+            "on_topic": true,
+            "grounded_ok": true,
+            "on_topic_ok": true,
+            "blocked": false,
+            "should_block": false,
+            "decision_ok": true,
+            "answers": {
+              "grounded": 1,
+              "on_topic": 1
+            },
+            "latency_ms": 798
+          }
+        }
+      },
+      {
+        "id": "v12",
+        "customer": "The export button fails on Safari.",
+        "topics": [
+          "export"
+        ],
+        "draft": "This is tracked as TICKET-9981 and will be fixed in next week's release.",
+        "grounded": false,
+        "on_topic": true,
+        "tag": "invented ticket + date",
+        "results": {
+          "jev": {
+            "grounded": false,
+            "on_topic": true,
+            "grounded_ok": true,
+            "on_topic_ok": true,
+            "blocked": true,
+            "should_block": true,
+            "decision_ok": true,
+            "answers": {
+              "grounded": 0.01,
+              "on_topic": 0.54
+            },
+            "latency_ms": 293
+          },
+          "llm": {
+            "grounded": false,
+            "on_topic": true,
+            "grounded_ok": true,
+            "on_topic_ok": true,
+            "blocked": true,
+            "should_block": true,
+            "decision_ok": true,
+            "answers": {
+              "grounded": 0,
+              "on_topic": 1
+            },
+            "latency_ms": 986
+          }
+        }
+      },
+      {
+        "id": "v13",
+        "customer": "The export button fails on Safari.",
+        "topics": [
+          "export"
+        ],
+        "draft": "That's a known issue. Switching to Firefox should fix it.",
+        "grounded": false,
+        "on_topic": true,
+        "tag": "wrong workaround",
+        "results": {
+          "jev": {
+            "grounded": false,
+            "on_topic": true,
+            "grounded_ok": true,
+            "on_topic_ok": true,
+            "blocked": true,
+            "should_block": true,
+            "decision_ok": true,
+            "answers": {
+              "grounded": 0.04,
+              "on_topic": 0.67
+            },
+            "latency_ms": 297
+          },
+          "llm": {
+            "grounded": false,
+            "on_topic": true,
+            "grounded_ok": true,
+            "on_topic_ok": true,
+            "blocked": true,
+            "should_block": true,
+            "decision_ok": true,
+            "answers": {
+              "grounded": 0,
+              "on_topic": 1
+            },
+            "latency_ms": 779
+          }
+        }
+      },
+      {
+        "id": "v14",
+        "customer": "The export button fails on Safari.",
+        "topics": [
+          "export"
+        ],
+        "draft": "We're really sorry for the inconvenience and appreciate your patience. It's a known bug (TICKET-4412); Chrome or the CSV export will work in the meantime.",
+        "grounded": true,
+        "on_topic": true,
+        "tag": "good, padded",
+        "results": {
+          "jev": {
+            "grounded": true,
+            "on_topic": true,
+            "grounded_ok": true,
+            "on_topic_ok": true,
+            "blocked": false,
+            "should_block": false,
+            "decision_ok": true,
+            "answers": {
+              "grounded": 0.96,
+              "on_topic": 0.97
+            },
+            "latency_ms": 280
+          },
+          "llm": {
+            "grounded": true,
+            "on_topic": true,
+            "grounded_ok": true,
+            "on_topic_ok": true,
+            "blocked": false,
+            "should_block": false,
+            "decision_ok": true,
+            "answers": {
+              "grounded": 1,
+              "on_topic": 1
+            },
+            "latency_ms": 746
+          }
+        }
+      },
+      {
+        "id": "v15",
+        "customer": "The export button fails on Safari.",
+        "topics": [
+          "export",
+          "refund"
+        ],
+        "draft": "Refunds post in 5-10 business days, and Pro accounts can be expedited.",
+        "grounded": true,
+        "on_topic": false,
+        "tag": "grounded but off-topic",
+        "results": {
+          "jev": {
+            "grounded": true,
+            "on_topic": false,
+            "grounded_ok": true,
+            "on_topic_ok": true,
+            "blocked": true,
+            "should_block": true,
+            "decision_ok": true,
+            "answers": {
+              "grounded": 0.98,
+              "on_topic": 0.02
+            },
+            "latency_ms": 363
+          },
+          "llm": {
+            "grounded": true,
+            "on_topic": false,
+            "grounded_ok": true,
+            "on_topic_ok": true,
+            "blocked": true,
+            "should_block": true,
+            "decision_ok": true,
+            "answers": {
+              "grounded": 1,
+              "on_topic": 0
+            },
+            "latency_ms": 839
+          }
+        }
+      },
+      {
+        "id": "v16",
+        "customer": "The export button fails on Safari.",
+        "topics": [
+          "export"
+        ],
+        "draft": "Team plans are $20/seat/mo with a volume discount at 25+ seats.",
+        "grounded": false,
+        "on_topic": false,
+        "tag": "wrong item",
+        "results": {
+          "jev": {
+            "grounded": false,
+            "on_topic": false,
+            "grounded_ok": true,
+            "on_topic_ok": true,
+            "blocked": true,
+            "should_block": true,
+            "decision_ok": true,
+            "answers": {
+              "grounded": 0.01,
+              "on_topic": 0.01
+            },
+            "latency_ms": 334
+          },
+          "llm": {
+            "grounded": false,
+            "on_topic": false,
+            "grounded_ok": true,
+            "on_topic_ok": true,
+            "blocked": true,
+            "should_block": true,
+            "decision_ok": true,
+            "answers": {
+              "grounded": 0,
+              "on_topic": 0
+            },
+            "latency_ms": 675
+          }
+        }
+      },
+      {
+        "id": "v17",
+        "customer": "Can you send pricing for 50 seats?",
+        "topics": [
+          "pricing"
+        ],
+        "draft": "Team plans are $20 per seat per month, and at 50 seats you'd qualify for our volume discount (25+ seats).",
+        "grounded": true,
+        "on_topic": true,
+        "tag": "good",
+        "results": {
+          "jev": {
+            "grounded": true,
+            "on_topic": true,
+            "grounded_ok": true,
+            "on_topic_ok": true,
+            "blocked": false,
+            "should_block": false,
+            "decision_ok": true,
+            "answers": {
+              "grounded": 0.93,
+              "on_topic": 0.86
+            },
+            "latency_ms": 274
+          },
+          "llm": {
+            "grounded": true,
+            "on_topic": true,
+            "grounded_ok": true,
+            "on_topic_ok": true,
+            "blocked": false,
+            "should_block": false,
+            "decision_ok": true,
+            "answers": {
+              "grounded": 1,
+              "on_topic": 1
+            },
+            "latency_ms": 807
+          }
+        }
+      },
+      {
+        "id": "v18",
+        "customer": "Can you send pricing for 50 seats?",
+        "topics": [
+          "pricing"
+        ],
+        "draft": "Team plans are $15 per seat per month.",
+        "grounded": false,
+        "on_topic": true,
+        "tag": "wrong number",
+        "results": {
+          "jev": {
+            "grounded": false,
+            "on_topic": true,
+            "grounded_ok": true,
+            "on_topic_ok": true,
+            "blocked": true,
+            "should_block": true,
+            "decision_ok": true,
+            "answers": {
+              "grounded": 0.13,
+              "on_topic": 0.55
+            },
+            "latency_ms": 262
+          },
+          "llm": {
+            "grounded": false,
+            "on_topic": true,
+            "grounded_ok": true,
+            "on_topic_ok": true,
+            "blocked": true,
+            "should_block": true,
+            "decision_ok": true,
+            "answers": {
+              "grounded": 0,
+              "on_topic": 1
+            },
+            "latency_ms": 938
+          }
+        }
+      },
+      {
+        "id": "v19",
+        "customer": "Can you send pricing for 50 seats?",
+        "topics": [
+          "pricing"
+        ],
+        "draft": "Great news: 50 seats gets you 40% off, so it's $12/seat/mo.",
+        "grounded": false,
+        "on_topic": true,
+        "tag": "invented discount",
+        "results": {
+          "jev": {
+            "grounded": false,
+            "on_topic": true,
+            "grounded_ok": true,
+            "on_topic_ok": true,
+            "blocked": true,
+            "should_block": true,
+            "decision_ok": true,
+            "answers": {
+              "grounded": 0.06,
+              "on_topic": 0.92
+            },
+            "latency_ms": 319
+          },
+          "llm": {
+            "grounded": true,
+            "on_topic": true,
+            "grounded_ok": false,
+            "on_topic_ok": true,
+            "blocked": false,
+            "should_block": true,
+            "decision_ok": false,
+            "answers": {
+              "grounded": 1,
+              "on_topic": 1
+            },
+            "latency_ms": 844
+          }
+        }
+      },
+      {
+        "id": "v20",
+        "customer": "Can you send pricing for 50 seats?",
+        "topics": [
+          "pricing"
+        ],
+        "draft": "At $20/seat/mo, 50 seats comes to $1,000/mo before the volume discount that applies at 25+ seats.",
+        "grounded": true,
+        "on_topic": true,
+        "tag": "derived arithmetic",
+        "results": {
+          "jev": {
+            "grounded": true,
+            "on_topic": true,
+            "grounded_ok": true,
+            "on_topic_ok": true,
+            "blocked": false,
+            "should_block": false,
+            "decision_ok": true,
+            "answers": {
+              "grounded": 0.8,
+              "on_topic": 0.9
+            },
+            "latency_ms": 301
+          },
+          "llm": {
+            "grounded": true,
+            "on_topic": true,
+            "grounded_ok": true,
+            "on_topic_ok": true,
+            "blocked": false,
+            "should_block": false,
+            "decision_ok": true,
+            "answers": {
+              "grounded": 1,
+              "on_topic": 1
+            },
+            "latency_ms": 647
+          }
+        }
+      },
+      {
+        "id": "v21",
+        "customer": "Do you offer a free trial?",
+        "topics": [
+          "pricing"
+        ],
+        "draft": "Team plans are $20/seat/mo with a volume discount at 25+ seats.",
+        "grounded": true,
+        "on_topic": false,
+        "tag": "grounded but off-topic",
+        "results": {
+          "jev": {
+            "grounded": true,
+            "on_topic": false,
+            "grounded_ok": true,
+            "on_topic_ok": true,
+            "blocked": true,
+            "should_block": true,
+            "decision_ok": true,
+            "answers": {
+              "grounded": 0.99,
+              "on_topic": 0.03
+            },
+            "latency_ms": 286
+          },
+          "llm": {
+            "grounded": true,
+            "on_topic": false,
+            "grounded_ok": true,
+            "on_topic_ok": true,
+            "blocked": true,
+            "should_block": true,
+            "decision_ok": true,
+            "answers": {
+              "grounded": 1,
+              "on_topic": 0
+            },
+            "latency_ms": 705
+          }
+        }
+      },
+      {
+        "id": "v22",
+        "customer": "Are you hiring frontend engineers?",
+        "topics": [],
+        "draft": "Thanks for asking! Someone from our team will follow up with you.",
+        "grounded": true,
+        "on_topic": true,
+        "tag": "no facts, courteous",
+        "results": {
+          "jev": {
+            "grounded": true,
+            "on_topic": false,
+            "grounded_ok": true,
+            "on_topic_ok": false,
+            "blocked": true,
+            "should_block": false,
+            "decision_ok": false,
+            "answers": {
+              "grounded": 0.57,
+              "on_topic": 0.27
+            },
+            "latency_ms": 287
+          },
+          "llm": {
+            "grounded": false,
+            "on_topic": true,
+            "grounded_ok": false,
+            "on_topic_ok": true,
+            "blocked": true,
+            "should_block": false,
+            "decision_ok": false,
+            "answers": {
+              "grounded": 0,
+              "on_topic": 1
+            },
+            "latency_ms": 542
+          }
+        }
+      },
+      {
+        "id": "v23",
+        "customer": "Are you hiring frontend engineers?",
+        "topics": [],
+        "draft": "Yes! We have 5 open frontend roles paying $150k, apply by Friday.",
+        "grounded": false,
+        "on_topic": true,
+        "tag": "hallucinated facts",
+        "results": {
+          "jev": {
+            "grounded": false,
+            "on_topic": true,
+            "grounded_ok": true,
+            "on_topic_ok": true,
+            "blocked": true,
+            "should_block": true,
+            "decision_ok": true,
+            "answers": {
+              "grounded": 0.01,
+              "on_topic": 0.97
+            },
+            "latency_ms": 280
+          },
+          "llm": {
+            "grounded": false,
+            "on_topic": true,
+            "grounded_ok": true,
+            "on_topic_ok": true,
+            "blocked": true,
+            "should_block": true,
+            "decision_ok": true,
+            "answers": {
+              "grounded": 0,
+              "on_topic": 1
+            },
+            "latency_ms": 683
+          }
+        }
+      },
+      {
+        "id": "v24",
+        "customer": "I can't log in, it says invalid token.",
+        "topics": [],
+        "draft": "Thanks for your interest in our team plans! A sales rep will reach out.",
+        "grounded": true,
+        "on_topic": false,
+        "tag": "misread request",
+        "results": {
+          "jev": {
+            "grounded": false,
+            "on_topic": false,
+            "grounded_ok": false,
+            "on_topic_ok": true,
+            "blocked": true,
+            "should_block": true,
+            "decision_ok": true,
+            "answers": {
+              "grounded": 0.08,
+              "on_topic": 0.01
+            },
+            "latency_ms": 282
+          },
+          "llm": {
+            "grounded": false,
+            "on_topic": false,
+            "grounded_ok": false,
+            "on_topic_ok": true,
+            "blocked": true,
+            "should_block": true,
+            "decision_ok": true,
+            "answers": {
+              "grounded": 0,
+              "on_topic": 0
+            },
+            "latency_ms": 583
+          }
+        }
+      }
+    ]
+  }
+}

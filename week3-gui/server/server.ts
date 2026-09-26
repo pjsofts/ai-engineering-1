@@ -10,7 +10,7 @@ import { fileURLToPath, pathToFileURL } from "node:url";
 const ROOT = path.dirname(path.dirname(fileURLToPath(import.meta.url))); // week3-gui/
 const WORKSHOP = path.resolve(ROOT, "../week3-workshop");
 const CLIENT_DIST = path.join(ROOT, "client", "dist");
-const PORT = 3377;
+const PORT = Number(process.env.PORT ?? 3377);
 
 // Load the API key from the workshop .env (same file the CLI uses).
 for (const line of fs.readFileSync(path.join(WORKSHOP, ".env"), "utf8").split("\n")) {
@@ -27,6 +27,9 @@ const PARTS: PartDef[] = [
     blurb: "Week 1's loop wearing a harness jacket. State is an in-memory array — a crash loses everything." },
   { id: "part2", dir: "part2-durable", title: "2 · Durable execution",
     blurb: "Every model turn and tool call is a checkpointed step. Crash, then run again: replay skips completed steps.",
+    options: ["crash"] },
+  { id: "part2jev", dir: "part2-jev", title: "2+ · Durable + Jev",
+    blurb: "Part 2, but Jev (a typed-judgment model) classifies each item, picks KB articles, and verifies every draft before sendReply. The LLM only writes. Jev's answers show up as cards.",
     options: ["crash"] },
   { id: "part3", dir: "part3-sandbox", title: "3 · Sandboxing & code mode",
     blurb: "The model writes programs that run in a vm sandbox with only read tools inside." },
@@ -137,6 +140,27 @@ async function runPart(part: PartDef, opts: RunOpts): Promise<void> {
   }
 }
 
+// ---------------- Jev benchmark (part2-jev/bench) ----------------
+const BENCH_DIR = path.join(WORKSHOP, "part2-jev");
+const BENCH_LATEST = path.join(BENCH_DIR, "bench", "results", "latest.json");
+async function runBenchmark(jevOnly: boolean): Promise<void> {
+  const prevCwd = process.cwd();
+  process.chdir(BENCH_DIR);          // harness/durable import side effects land here
+  try {
+    const bench = await import(pathToFileURL(path.join(BENCH_DIR, "bench", "bench.ts")).href);
+    push({ kind: "bench", status: "running", done: 0, total: 0, label: "warming up…" });
+    await bench.runBench({ systems: jevOnly ? ["jev"] : ["jev", "llm"] },
+      (m: { done: number; total: number; label: string }) =>
+        push({ kind: "bench", status: "running", ...m }));
+    push({ kind: "bench", status: "done" });
+  } catch (err) {
+    push({ kind: "bench", status: "error", detail: String(err) });
+  } finally {
+    process.chdir(prevCwd);
+    busy = null;
+  }
+}
+
 // ---------------- helpers ----------------
 function json(res: http.ServerResponse, code: number, body: unknown): void {
   res.writeHead(code, { "content-type": "application/json" });
@@ -181,6 +205,18 @@ const server = http.createServer(async (req, res) => {
     if (busy) return json(res, 409, { error: `busy: ${busy} is running` });
     busy = part.id;
     void runPart(part, body);          // fire and forget; results go over SSE
+    return json(res, 200, { ok: true });
+  }
+  if (url.pathname === "/api/bench" && req.method === "GET") {
+    if (!fs.existsSync(BENCH_LATEST)) return json(res, 404, { error: "no results yet" });
+    res.writeHead(200, { "content-type": "application/json" });
+    return void res.end(fs.readFileSync(BENCH_LATEST));
+  }
+  if (url.pathname === "/api/bench" && req.method === "POST") {
+    const body = await readBody(req);
+    if (busy) return json(res, 409, { error: `busy: ${busy} is running` });
+    busy = "bench";
+    void runBenchmark(!!body.jevOnly);
     return json(res, 200, { ok: true });
   }
   if (req.method === "POST" && url.pathname === "/api/approve") {
