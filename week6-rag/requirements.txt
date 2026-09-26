@@ -1,0 +1,8 @@
+openai==3.16.2
+upstash-vector==0.8.0
+typesafe-sdk==0.7.1
+python-dotenv==1.2.3
+numpy==2.5.3
+pypdf==6.19.0
+langchain-text-splitters==1.1.2
+deepeval==4.2.6

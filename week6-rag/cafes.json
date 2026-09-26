@@ -1,0 +1,93 @@
+[
+  {
+    "name": "Kestrel Coffee Works",
+    "neighborhood": "Riverside",
+    "hours": "Mon-Fri 6:30-18:00, Sat-Sun 8:00-17:00",
+    "price": "$$",
+    "description": "A bright corner roastery with a house espresso blend and single-origin pour-overs on a rotating bar. Big communal oak table, fast free wifi, and plenty of outlets, so remote workers camp here all morning. No food beyond pastries from a neighbouring bakery. Dogs welcome on the patio."
+  },
+  {
+    "name": "The Quiet Hour",
+    "neighborhood": "Old Town",
+    "hours": "Daily 7:00-15:00",
+    "price": "$$",
+    "description": "A deliberately laptop-free cafe: no wifi, phones on silent, conversation kept low. Dim lighting, soft jazz, deep armchairs and a small library of secondhand paperbacks. Known for a nutty Brazilian filter coffee and a thick cardamom hot chocolate. Reading, journalling and quiet dates only."
+  },
+  {
+    "name": "Mochi & Milk",
+    "neighborhood": "Little Osaka",
+    "hours": "Tue-Sun 10:00-20:00",
+    "price": "$$",
+    "description": "Japanese-style cafe serving matcha lattes whisked to order, hojicha, and a short menu of mochi doughnuts and fluffy soufflé pancakes. Oat, soy and almond milk at no extra charge. Small, often a queue at weekends, mostly seats of two. Cash-free."
+  },
+  {
+    "name": "Ferrous",
+    "neighborhood": "Docklands",
+    "hours": "Mon-Fri 7:00-16:00",
+    "price": "$$$",
+    "description": "A minimal concrete-and-steel espresso bar aimed at coffee purists. Competition-grade gear, a rotating guest roaster, and baristas who will talk grind size with you for twenty minutes. Only three seats plus a standing rail, so it is a takeaway spot. No milk alternatives on the espresso flight."
+  },
+  {
+    "name": "Sunbeam Social",
+    "neighborhood": "Parkside",
+    "hours": "Daily 8:00-18:00",
+    "price": "$$",
+    "description": "A family-friendly cafe beside the park with a fenced play corner, high chairs, baby-changing facilities and a kids' menu. Full brunch served until 15:00, including huevos rancheros and buttermilk pancakes. Step-free access throughout and a wide accessible bathroom. Noisy and cheerful."
+  },
+  {
+    "name": "Night Owl Espresso",
+    "neighborhood": "University Quarter",
+    "hours": "Daily 12:00-01:00",
+    "price": "$",
+    "description": "The only late-night coffee in the city, open until 1am for students and shift workers. Cheap bottomless filter, strong cortados, instant-noodle-grade toasties, and long study benches with lamps and power. Gets loud after 22:00 when the bar crowd drifts in."
+  },
+  {
+    "name": "Fig & Thistle",
+    "neighborhood": "Riverside",
+    "hours": "Wed-Sun 9:00-17:00",
+    "price": "$$$",
+    "description": "A fully plant-based cafe and bakery. Everything vegan, with a dedicated gluten-free prep bench and clear allergen labelling on every item. Famous for a pistachio-rose cake and a smoky mushroom sandwich. Courtyard garden at the back, no reservations, long weekend waits."
+  },
+  {
+    "name": "Cafe Meridiana",
+    "neighborhood": "Old Town",
+    "hours": "Daily 7:30-23:00",
+    "price": "$$",
+    "description": "A classic Italian bar: standing espresso at the counter in the morning, aperitivo and pastries in the evening. Cornetti baked on site, proper cappuccino before 11, and a granita menu in summer. Marble tables, tiled floor, brisk service. Takes cash and card."
+  },
+  {
+    "name": "Loom",
+    "neighborhood": "Textile District",
+    "hours": "Mon-Sat 8:00-19:00",
+    "price": "$$",
+    "description": "A large cafe in a converted mill, built for working: three meeting pods bookable by the hour, a silent mezzanine, monitor-height desks and gigabit wifi. Filter coffee refills are free with any food order. Also hosts evening talks and a Thursday knitting group."
+  },
+  {
+    "name": "Tortuga Cold Brew",
+    "neighborhood": "Docklands",
+    "hours": "Daily 9:00-19:00",
+    "price": "$",
+    "description": "A tiny kiosk on the waterfront specialising in cold brew, nitro on tap, and coffee tonics. Everything is takeaway in compostable cups, with a handful of deckchairs on the boardwalk. Seasonal citrus cold brew in summer. Card only, queue moves fast."
+  },
+  {
+    "name": "Rosehip Tearoom",
+    "neighborhood": "Parkside",
+    "hours": "Thu-Sun 11:00-18:00",
+    "price": "$$$",
+    "description": "A traditional tearoom doing full afternoon tea on tiered stands, booked two weeks ahead. Forty loose-leaf teas, scones with clotted cream, and a decent decaf. Floral wallpaper, bone china, no laptops by house rule. Good for birthdays and visiting relatives."
+  },
+  {
+    "name": "Basecamp Coffee",
+    "neighborhood": "University Quarter",
+    "hours": "Daily 6:00-16:00",
+    "price": "$",
+    "description": "Opens at 6am for runners and cyclists, with bike racks, a repair stand and a shower pass scheme. Big flat whites, overnight oats, banana bread and a protein-heavy breakfast bowl. Concrete floors, benches, and a wall of race numbers. Fills up at 8am with commuters."
+  },
+  {
+    "name": "Pergola",
+    "neighborhood": "Little Osaka",
+    "hours": "Tue-Sun 9:00-22:00",
+    "price": "$$$",
+    "description": "A glasshouse cafe that turns into a natural wine bar after 17:00. Plants everywhere, a long shared table, and a short seasonal menu of small plates. Good for a slow date, with a candlelit terrace. Espresso is secondary here; the coffee stops being made at 18:00."
+  }
+]
