@@ -1,0 +1,517 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Week 7 · RAG + Vector Databases — Slides</title>
+<link rel="icon" href="logo-mark.png">
+<style>
+@font-face { font-family: "Space Grotesk"; font-weight: 400 700; font-display: swap; src: url("fonts/space-grotesk.woff2") format("woff2"); }
+@font-face { font-family: "Inter"; font-weight: 100 900; font-display: swap; src: url("fonts/inter.woff2") format("woff2"); }
+@font-face { font-family: "JetBrains Mono"; font-weight: 100 800; font-display: swap; src: url("fonts/jetbrains-mono.woff2") format("woff2"); }
+
+/* The same brand as the workflows webinar deck: warm paper, ink, violet, gold. */
+:root {
+  --paper: #f7f3ea; --paper-2: #efe7d7; --card: #fdfbf6;
+  --ink: #17132e; --ink-soft: #55507a;
+  --violet: #6d4bd0; --violet-deep: #4a2ea0; --violet-wash: #ede8fb;
+  --gold: #e8c65a; --gold-deep: #c9a338; --gold-wash: #faf0d2;
+  --teal: #0f8f80; --teal-wash: #ddf3ef;
+  --rose: #c2416b;
+  --term-green: #7ddca4;
+  --rule: rgba(23, 19, 46, 0.14);
+  --display: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+}
+* { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; }
+body { overflow: hidden; background: #0b0918; font-family: var(--sans); color: var(--ink); }
+h1, h2, h3 { font-family: var(--display); font-weight: 700; letter-spacing: -0.03em; line-height: 1.02; margin: 0; text-wrap: balance; }
+p { margin: 0; }
+code, .mono { font-family: var(--mono); }
+
+.viewport { position: fixed; inset: 0 0 52px 0; display: grid; place-items: center; }
+.stage { width: 1280px; height: 720px; position: relative; transform: scale(var(--s, 1)); flex: none; }
+
+/* ---------------- a slide ---------------- */
+.slide { position: absolute; inset: 0; display: none; flex-direction: column; padding: 60px 84px 80px; background: var(--paper); overflow: hidden; box-shadow: 0 40px 80px -40px rgba(0,0,0,.8); }
+.slide.on { display: flex; }
+.slide.ink { background: var(--ink); color: #d9d3f5; }
+
+.lbl { display: inline-flex; align-items: center; gap: .6ch; font: 600 14px var(--mono); letter-spacing: .16em; text-transform: uppercase; color: var(--violet-deep); }
+.lbl::before { content: ""; width: 22px; height: 2px; background: var(--violet); }
+.lbl.gold { color: var(--gold-deep); } .lbl.gold::before { background: var(--gold-deep); }
+.hd { margin-bottom: 30px; }
+.hd h2 { margin-top: 14px; font-size: 52px; }
+.hd-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; }
+.demo { flex: none; margin-top: 2px; font: 600 15px var(--mono); padding: 7px 13px; border-radius: 8px; background: var(--ink); color: var(--gold); letter-spacing: .02em; }
+
+.sfoot { position: absolute; left: 84px; right: 84px; bottom: 26px; display: flex; justify-content: space-between; align-items: center; padding-top: 12px; border-top: 1px solid var(--rule); font: 13px var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-soft); }
+.sfoot .brand { display: inline-flex; gap: 10px; align-items: center; color: var(--violet-deep); }
+.sfoot img { width: 20px; height: 20px; border-radius: 5px; }
+.ink .sfoot { border-top-color: rgba(233,228,255,.14); color: #8e87b8; }
+.ink .sfoot .brand { color: #c3bce8; }
+
+.note { margin-top: auto; padding: 15px 22px; font-size: 21px; line-height: 1.45; background: var(--gold-wash); border-left: 4px solid var(--gold); border-radius: 8px; }
+.note b { font-weight: 650; }
+
+/* title */
+.s-title { justify-content: center; }
+.blob { position: absolute; border-radius: 50%; }
+.blob.v { width: 720px; height: 720px; background: var(--violet-wash); right: -220px; top: -300px; }
+.blob.g { width: 360px; height: 360px; background: var(--gold-wash); left: -160px; bottom: -180px; }
+.title-body { position: relative; }
+.s-title h1 { margin-top: 26px; font-size: 100px; line-height: .98; }
+.mark-gold { background: linear-gradient(transparent 62%, var(--gold) 62%, var(--gold) 94%, transparent 94%); padding: 0 .06em; }
+.title-sub { margin-top: 28px; font-size: 27px; max-width: 36ch; color: var(--ink-soft); line-height: 1.4; }
+.title-by { display: flex; align-items: center; gap: 18px; margin-top: 50px; }
+.title-by img { width: 52px; height: 52px; border-radius: 12px; }
+.title-by strong { display: block; font: 700 26px var(--display); }
+.title-by span { font: 15px var(--mono); color: var(--ink-soft); }
+
+/* section / statement / end */
+.mid { margin: auto 0; }
+.sec-n { font: 600 30px var(--mono); color: var(--gold); letter-spacing: .1em; }
+.s-section .mid::before { content: ""; display: block; width: 96px; height: 6px; background: var(--gold); margin-bottom: 40px; }
+.s-section h2 { margin-top: 18px; font-size: 100px; color: #fff; }
+.s-section p { margin-top: 26px; font-size: 30px; color: #a49dd0; }
+.stmt { font: 700 66px/1.08 var(--display); letter-spacing: -0.03em; color: #fff; max-width: 21ch; text-wrap: balance; }
+.stmt-sub { margin-top: 34px; font-size: 28px; line-height: 1.4; color: #a49dd0; max-width: 50ch; padding-left: 22px; border-left: 4px solid var(--gold); }
+.end-body h2 { font-size: 84px; color: #fff; }
+.end-body p { margin-top: 22px; font-size: 26px; color: #a49dd0; max-width: 46ch; line-height: 1.45; }
+.end-body img { width: 130px; height: 130px; border-radius: 16px; margin-bottom: 30px; }
+
+/* agenda */
+.agenda { list-style: none; margin: 0; padding: 0; display: grid; gap: 11px; }
+.agenda li { display: grid; grid-template-columns: 56px 380px 1fr; align-items: baseline; gap: 18px; padding: 13px 22px; background: var(--card); border: 1px solid var(--rule); border-left: 4px solid var(--violet); border-radius: 10px; }
+.agenda .n { font: 600 21px var(--mono); color: var(--violet-deep); }
+.agenda .t { font: 700 26px var(--display); letter-spacing: -0.02em; }
+.agenda .l { font-size: 18px; color: var(--ink-soft); }
+
+/* points */
+.pts { list-style: none; margin: 0; padding: 0; display: grid; gap: 22px; }
+.pts li { display: grid; grid-template-columns: 52px 1fr; gap: 12px; font-size: 25px; line-height: 1.38; color: var(--ink-soft); }
+.pts .n { font: 600 20px var(--mono); color: var(--violet); padding-top: 4px; }
+.pts strong { display: block; color: var(--ink); font: 700 1em var(--display); letter-spacing: -0.01em; }
+.pts .rest { font-size: .88em; }
+
+/* compare */
+.cmp { display: grid; grid-template-columns: 1fr 1fr; gap: 26px; margin-bottom: 24px; }
+.col { padding: 24px 28px; border-radius: 12px; border: 1px solid var(--rule); }
+.col h3 { font-size: 28px; margin-bottom: 14px; }
+.col ul { margin: 0; padding-left: 22px; display: grid; gap: 10px; }
+.col li { font-size: 21px; line-height: 1.38; color: var(--ink-soft); }
+.col.violet { background: var(--violet-wash); border-color: rgba(109,75,208,.28); }
+.col.gold { background: var(--gold-wash); border-color: rgba(201,163,56,.4); }
+.col.ink { background: var(--ink); border-color: var(--ink); }
+.col.ink h3 { color: #fff; } .col.ink li { color: #c3bce8; }
+.col pre { margin: 12px 0 0; font: 16px/1.5 var(--mono); white-space: pre-wrap; }
+.col.ink pre { color: var(--gold); }
+
+/* code */
+.code-grid { display: grid; grid-template-columns: .66fr 1.34fr; gap: 42px; align-items: center; flex: 1; min-height: 0; }
+.code-copy h2 { margin-top: 14px; font-size: 46px; }
+.code-copy p { margin-top: 20px; font-size: 21px; line-height: 1.5; color: var(--ink-soft); }
+.code-copy .demo { display: inline-block; margin-top: 22px; }
+.term { font-variant-ligatures: none; background: var(--ink); border-radius: 14px; overflow: hidden; font-family: var(--mono); box-shadow: 0 2px 4px rgba(23,19,46,.05), 0 14px 28px -20px rgba(23,19,46,.5); }
+.term-bar { display: flex; align-items: center; gap: 7px; padding: 10px 14px; background: #100d24; border-bottom: 1px solid rgba(233,228,255,.12); }
+.term-bar i { width: 11px; height: 11px; border-radius: 50%; background: #3b3566; }
+.term-bar i:first-child { background: var(--gold); }
+.term-bar span { margin-left: auto; font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: #6f68a3; }
+.term-body { padding: 18px 22px 22px; color: #e9e4ff; font-size: 16.5px; line-height: 1.58; }
+.term-body .l { display: block; white-space: pre; min-height: 1.58em; }
+.term .k { color: #b49bff; } .term .s { color: var(--term-green); } .term .c { color: #8c85bd; font-style: italic; } .term .hl { background: rgba(232,198,90,.16); box-shadow: -22px 0 0 rgba(232,198,90,.16), 22px 0 0 rgba(232,198,90,.16); }
+
+/* table */
+.tbl { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 21px; background: var(--card); border: 1px solid var(--rule); border-radius: 12px; overflow: hidden; }
+.tbl thead th { font-size: 14px; letter-spacing: .12em; text-transform: uppercase; padding: 13px 20px; background: var(--ink); color: #fff; text-align: left; }
+.tbl tbody th { font: 700 22px var(--display); text-align: left; padding: 13px 20px; border-bottom: 1px solid var(--rule); white-space: nowrap; }
+.tbl td { padding: 13px 20px; color: var(--ink-soft); border-bottom: 1px solid var(--rule); }
+.tbl tbody tr:last-child > * { border-bottom: 0; }
+.tbl .big { font: 700 26px var(--display); color: var(--ink); }
+.tbl .hot { color: var(--rose); font-weight: 650; }
+
+/* pipeline */
+.lane { display: grid; grid-template-columns: 150px repeat(4, 1fr); gap: 14px; align-items: center; margin-bottom: 18px; }
+.lane-name { font: 600 14px var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--violet-deep); }
+.lane-name small { display: block; margin-top: 4px; font: 14px var(--sans); letter-spacing: 0; text-transform: none; color: var(--ink-soft); }
+.box { position: relative; padding: 16px 16px; border-radius: 12px; background: var(--card); border: 2px solid var(--rule); min-height: 104px; }
+.box b { display: block; font: 700 22px var(--display); }
+.box span { display: block; margin-top: 4px; font-size: 16px; color: var(--ink-soft); line-height: 1.35; }
+.box.api { border-color: var(--teal); background: var(--teal-wash); }
+.box.db { border-color: var(--rose); }
+.box.llm { border-color: var(--violet); background: var(--violet-wash); }
+.box:not(:last-child)::after { content: "→"; position: absolute; right: -16px; top: 50%; transform: translateY(-50%); font: 700 20px var(--display); color: var(--ink-soft); }
+
+/* checklist */
+.check { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 12px 30px; }
+.check li { display: grid; grid-template-columns: 30px 1fr; font-size: 20px; line-height: 1.4; color: var(--ink); }
+.check li::before { content: "☐"; color: var(--violet); font-size: 22px; line-height: 1.25; }
+
+/* controls */
+.controls { position: fixed; left: 0; right: 0; bottom: 0; height: 52px; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; padding: 0 18px; font: 13px var(--mono); color: #a49dd0; }
+.mid-ctl { display: flex; gap: 14px; align-items: center; }
+.right-ctl { justify-self: end; display: flex; gap: 8px; }
+.controls button { font: inherit; color: #e9e4ff; background: rgba(233,228,255,.08); border: 1px solid rgba(233,228,255,.16); border-radius: 6px; padding: 5px 11px; cursor: pointer; }
+.controls button:hover { border-color: var(--gold); color: var(--gold); }
+.progress { position: fixed; left: 0; right: 0; bottom: 52px; height: 3px; background: rgba(233,228,255,.08); }
+.progress i { display: block; height: 100%; width: 0; background: var(--gold); transition: width .2s; }
+:fullscreen .controls, :fullscreen .progress { opacity: 0; } :fullscreen .controls:hover { opacity: 1; } :fullscreen .viewport { inset: 0; }
+
+@media print {
+  @page { size: 1280px 720px; margin: 0; }
+  html, body { height: auto; overflow: visible; background: none; }
+  .viewport { position: static; display: block; }
+  .stage { transform: none; height: auto; }
+  .slide { display: flex !important; position: relative; width: 1280px; height: 720px; box-shadow: none; break-after: page; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .controls, .progress { display: none; }
+}
+</style>
+</head>
+<body>
+<div class="viewport"><div class="stage" id="stage"></div></div>
+<nav class="controls">
+  <span>Week 7 · RAG + Vector Databases</span>
+  <div class="mid-ctl"><button data-go="prev">←</button><span id="counter"></span><button data-go="next">→</button></div>
+  <div class="right-ctl"><button data-go="full">⛶ F</button><button data-go="print">PDF</button></div>
+</nav>
+<div class="progress"><i id="bar"></i></div>
+
+<script>
+// ------------------------------------------------------------------ the deck
+// Each slide is one object. `demo` adds a tag saying which step of the
+// visualizer (python server.py → http://127.0.0.1:8766) to switch to.
+const P1 = "01 · Chunking", P2 = "02 · Embeddings", P3 = "03 · The vector store",
+      P4 = "04 · Incremental indexing", P5 = "05 · The search tool", P6 = "06 · Ask the codebase";
+
+const SLIDES = [
+  { t: "title" },
+  { t: "statement", text: "grep finds words. This week the agent learns to find meaning.",
+    sub: "“Where do we handle rate limiting?” The code says throttle. grep comes back empty." },
+  { t: "agenda" },
+  { t: "compare", lbl: "The problem", title: "Same question, two searches", cols: [
+    { h: "grep “rate limit”", tone: "ink", items: ["Matches text, character by character", "The code never says “rate limit”", "Result: nothing found"],
+      pre: "$ grep -ri \"rate limit\" .\n(no output)" },
+    { h: "Search by meaning", tone: "gold", items: ["Matches what the code is about", "Finds TokenBucket and allow_request", "Works when you don’t know the names"],
+      pre: "api/throttle.py:28  similarity 0.70\ndef allow_request(client_id): ..." },
+  ], note: "<b>grep is still the default.</b> It is instant, exact and free. Semantic search is for when you don’t know the words." },
+  { t: "points", lbl: "The idea", title: "RAG in three letters", points: [
+    ["Retrieve", "Find the few chunks of code closest in meaning to the question."],
+    ["Augment", "Paste those chunks into the prompt."],
+    ["Generate", "The model answers from them, and cites where each fact came from."],
+  ], note: "The model never sees the whole repo. It sees the 4 or 5 chunks that matter." },
+  { t: "pipeline" },
+
+  // ---------------------------------------------------------------- 01
+  { t: "section", n: "01", title: "Chunking", sub: "Cut code into pieces worth embedding" },
+  { t: "compare", lbl: P1, title: "Where do you cut?", demo: "Step 1", cols: [
+    { h: "Every N lines", tone: "violet", items: ["Simple, and wrong for code", "Cuts a function in two halves", "Half a function means nothing on its own", "Search lands on a fragment"] },
+    { h: "At each def / class", tone: "gold", items: ["Every chunk is one whole unit", "Every chunk has a name", "Search returns something you can read", "Still simple: one regex"] },
+  ] },
+  { t: "code", lbl: P1, title: "Cut at definitions", demo: "Step 1", file: "rag/chunking.py",
+    caption: "Find the lines where a function or class starts. Each chunk runs from one start to the next. A very long function is cut again so no chunk is huge.",
+    code: `DEFINITION = re.compile(r"^(def |class |function |export function )")
+
+def chunk_by_definition(path, text, max_lines=60):
+    lines = text.splitlines()
+    starts = [n for n, line in enumerate(lines) if DEFINITION.match(line)]
+    if not starts or starts[0] != 0:
+        starts.insert(0, 0)              # the imports at the top
+    ends = starts[1:] + [len(lines)]
+
+    chunks = []
+    for start, end in zip(starts, ends):
+        for piece in range(start, end, max_lines):
+            chunks.append(make_chunk(path, lines, piece,
+                                     min(piece + max_lines, end)))
+    return chunks`, hl: [5] },
+  { t: "points", lbl: P1, title: "Good enough beats perfect", points: [
+    ["A regex is fine", "Retrieval is forgiving. A chunk that starts one line early still means the same thing."],
+    ["Cap the size", "One 2,000-line function should not become one giant, blurry chunk."],
+    ["Keep the location", "Store path, start line and end line with every chunk. That is how answers cite path:line."],
+    ["Upgrade only if needed", "A real parser (tree-sitter) only when your measurements say the regex hurts."],
+  ] },
+
+  // ---------------------------------------------------------------- 02
+  { t: "section", n: "02", title: "Embeddings", sub: "Text in, a list of numbers out" },
+  { t: "points", lbl: P2, title: "An embedding is a direction", demo: "Step 2", points: [
+    ["Text → vector", "An embedding model turns any text into a list of numbers (1,536 for text-embedding-3-small)."],
+    ["Similar meaning, similar direction", "“Charge the customer” and “deduct money from the card” point the same way, with no words in common."],
+    ["Cosine similarity", "Measures the angle between two vectors. 1.0 means the same direction; near 0 means unrelated."],
+  ] },
+  { t: "code", lbl: P2, title: "Two small functions", demo: "Step 2", file: "rag/llm.py + rag/vectors.py",
+    caption: "Embed many texts in one call, it is much cheaper. Cosine similarity is a dot product divided by the two lengths. That is all the maths in this week.",
+    code: `def embed(texts):
+    response = client.embeddings.create(
+        model="text-embedding-3-small", input=texts)
+    return [item.embedding for item in response.data]
+
+
+def dot(a, b):
+    return sum(x * y for x, y in zip(a, b))
+
+def length(vector):
+    return math.sqrt(dot(vector, vector))
+
+def cosine_similarity(a, b):
+    return dot(a, b) / (length(a) * length(b))`, hl: [14] },
+  { t: "table", lbl: P2, title: "Why RAG is cheap", head: ["", "When", "Cost"], rows: [
+    ["Embed the repo", "once, then only changed files", "a few cents for a big repo"],
+    ["Embed the question", "every question", "one tiny call"],
+    ["Find the closest chunks", "every question", "free: local maths"],
+    ["Ask the chat model", "every question", "the only big cost, on 4–5 chunks"],
+  ], note: "Embedding is roughly <b>100× cheaper</b> than a chat call. You pay for the big model only at the end, and only on what matters." },
+
+  // ---------------------------------------------------------------- 03
+  { t: "section", n: "03", title: "The vector store", sub: "A JSON file and a loop" },
+  { t: "code", lbl: P3, title: "A vector database, from scratch", demo: "Step 3", file: "rag/store.py",
+    caption: "A vector database does two things: keep vectors, and find the ones closest to a query. For a codebase that is a list in a JSON file and one loop.",
+    code: `def search(store, query_vector, k=5):
+    scored = []
+    for chunk in store["chunks"]:
+        score = cosine_similarity(query_vector, chunk["vector"])
+        scored.append((score, chunk))
+
+    scored.sort(key=lambda pair: pair[0], reverse=True)  # best first
+
+    hits = []
+    for score, chunk in scored[:k]:
+        hits.append({"path": chunk["path"], "start": chunk["start"],
+                     "end": chunk["end"], "text": chunk["text"],
+                     "score": round(score, 3)})
+    return hits`, hl: [4, 7] },
+  { t: "table", lbl: P3, title: "When to use a real vector DB", head: ["Chunks", "What to use", "Why"], rows: [
+    ["Up to ~50,000", "a JSON file + a loop", "a few milliseconds per search"],
+    ["Millions", "FAISS, pgvector, Qdrant", "approximate nearest-neighbour indexes"],
+    ["Shared by a team", "a vector DB service", "one index, many users"],
+  ], note: "The interface stays the same two calls: <b>upsert</b> and <b>search</b>. You are not learning a toy." },
+
+  // ---------------------------------------------------------------- 04
+  { t: "section", n: "04", title: "Incremental indexing", sub: "Only embed what changed" },
+  { t: "code", lbl: P4, title: "A hash per file", demo: "Step 4", file: "rag/indexer.py",
+    caption: "Save a hash of every file. Next run, same hash means same content: keep the old vectors. Start from an empty index each time, so deleted files simply disappear.",
+    code: `def build_index(repo, index_path):
+    old = load_store(index_path)
+    if old["model"] != EMBED_MODEL:
+        old = empty_store()     # another model: embed everything again
+
+    new = empty_store()         # deleted files simply vanish
+    new["model"] = EMBED_MODEL
+
+    for path in find_code_files(repo):
+        text = read_source(repo, path)
+        fingerprint = file_hash(text)
+        new["files"][path] = fingerprint
+
+        if old["files"].get(path) == fingerprint:
+            new["chunks"] += [c for c in old["chunks"] if c["path"] == path]
+        else:
+            new["chunks"] += embed_file(path, text)
+
+    save_store(new, index_path)`, hl: [14, 15] },
+  { t: "table", lbl: P4, title: "Four runs on the sample repo", demo: "Step 4", head: ["Run", "Embedded", "Reused", "Deleted"], rows: [
+    ["First run", "<span class='big'>10</span>", "0", "0"],
+    ["Nothing changed", "<span class='big'>0</span>", "10", "0"],
+    ["Edited auth/session.py", "<span class='big'>1</span>", "9", "0"],
+    ["Deleted web/navbar.js", "<span class='big'>0</span>", "9", "<span class='hot'>1</span>"],
+  ], note: "An index that is out of date gives wrong answers. Make it cheap to refresh, and people will refresh it." },
+
+  // ---------------------------------------------------------------- 05
+  { t: "section", n: "05", title: "The search tool", sub: "Give the agent both kinds of search" },
+  { t: "table", lbl: P5, title: "grep vs semantic search", demo: "Step 5", head: ["", "grep_search", "semantic_search"], rows: [
+    ["Matches", "exact text", "meaning"],
+    ["Cost", "free", "one embedding call"],
+    ["Speed", "instant", "a few hundred ms"],
+    ["Needs", "nothing", "an up-to-date index"],
+    ["Use when", "you know a name or string", "“where do we handle X?”"],
+  ] },
+  { t: "code", lbl: P5, title: "The description picks the tool", demo: "Step 7", file: "rag/tools.py",
+    caption: "The docstring is what the model reads. It says when to use each tool, not just what it does. That is context engineering from week 6, applied to tool choice.",
+    code: `def grep_search(pattern):
+    """Find lines that contain this exact text.
+    Fast and free. Use it when you know a name or string
+    from the code, like a function name or an error message."""
+
+
+def semantic_search(query):
+    """Find code by MEANING, not exact text. Use it for
+    questions like 'where do we handle X?' when you don't
+    know the names used in the code.
+    For a known name or string, use grep_search instead."""
+    hits = retrieve(query, k=3)
+    ...  # return "path:start-end (similarity)" + the code`, hl: [3, 11] },
+  { t: "points", lbl: P5, title: "Design rules for a search tool", points: [
+    ["Return path:line", "So the model can open the file and cite it."],
+    ["Return few results", "3–5 strong matches beat 20 weak ones, for the model’s attention and your token budget."],
+    ["Show the score", "A low similarity tells the model the match is weak."],
+    ["Fail clearly", "No index yet? Say “run /index first”, don’t return an empty string."],
+  ] },
+
+  // ---------------------------------------------------------------- 06
+  { t: "section", n: "06", title: "Ask the codebase", sub: "Retrieve, then answer with citations" },
+  { t: "code", lbl: P6, title: "Full RAG in ten lines", demo: "Step 6", file: "rag/step6_ask_codebase.py",
+    caption: "Retrieve the closest chunks, paste them into the prompt, and tell the model to use only them, cite path:line, and refuse when the answer isn’t there.",
+    code: `SYSTEM = """You answer questions about a codebase.
+Use ONLY the code excerpts below. Cite each fact as path:line.
+If the excerpts do not contain the answer, reply exactly:
+"Not in the provided code." Never guess."""
+
+def run(question):
+    hits = retrieve(question, k=4)                 # R: retrieve
+    excerpts = format_excerpts(hits)               # A: augment
+    prompt = f"Code excerpts:\\n\\n{excerpts}\\n\\nQuestion: {question}"
+    return ask(prompt, system=SYSTEM)              # G: generate`, hl: [2, 3] },
+  { t: "compare", lbl: P6, title: "Grounding is the whole point", demo: "Step 6", cols: [
+    { h: "Without “use ONLY these”", tone: "violet", items: ["Mixes the excerpts with guesses from training", "Sounds sure, can be wrong", "Invents a database the repo doesn’t have"] },
+    { h: "With it", tone: "gold", items: ["Every claim has a path:line you can check", "Says “Not in the provided code.” when it should", "Wrong retrieval shows up as a refusal, not a lie"] },
+  ], note: "An ungrounded RAG answer is just a hallucination with footnotes." },
+  { t: "points", lbl: "When RAG goes wrong", title: "Check retrieval first", points: [
+    ["Bad answer?", "Look at the chunks it got before you blame the model. Most RAG bugs are retrieval bugs."],
+    ["Right file, wrong chunk?", "Check your chunking: did the function get cut in half?"],
+    ["Stale results?", "Re-index. Then make indexing incremental so it stays fresh."],
+    ["Known name?", "That was a grep question. Let the agent use grep."],
+  ] },
+
+  // ---------------------------------------------------------------- wrap up
+  { t: "points", lbl: "Practice", title: "Exercises", dense: true, points: [
+    ["grep vs semantic, head to head", "5 questions about a real repo, both tools. Table: which won, and why."],
+    ["Chunking quality", "Same questions with fixed windows vs definitions. Count useful results."],
+    ["Hybrid ranking", "Boost chunks that both grep and semantic search found. Better than either alone?"],
+    ["Re-index on save", "Run the incremental index after every edit_file. What does it add per edit?"],
+    ["Cite or refuse", "Ask what the repo can’t answer. If it invents, fix the prompt until it refuses."],
+  ] },
+  { t: "checklist" },
+  { t: "end" },
+];
+
+const AGENDA = [
+  ["01", "Chunking", "split code into named units, not fixed windows"],
+  ["02", "Embeddings", "text into vectors; cosine similarity"],
+  ["03", "The vector store", "a JSON file and a loop"],
+  ["04", "Incremental indexing", "embed only what changed"],
+  ["05", "The search tool", "grep vs meaning, side by side"],
+  ["06", "Ask the codebase", "retrieve, then answer with citations"],
+];
+
+const CHECKLIST = [
+  "/index builds an index of a real repo and prints file and chunk counts",
+  "Chunks split on definitions: functions stay whole",
+  "The store is a JSON file, with cosine search you wrote yourself",
+  "Editing one file re-embeds only that file (prove it with timing)",
+  "Deleting a file removes its chunks on the next /index",
+  "semantic_search is a tool; its description steers grep vs semantic",
+  "ask_codebase answers a real question with path:line citations",
+  "It replies “Not in the provided code.” when the answer isn’t there",
+];
+
+// ------------------------------------------------------------------ rendering
+const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+const KW = /\b(def|return|for|in|if|not|or|and|import|from|else|while|lambda|class)\b/g;
+
+function highlight(code, hl = []) {
+  return code.split("\n").map((line, i) => {
+    let body = line, comment = "";
+    const hash = line.search(/#(?![^"]*"[^"]*$)/);
+    if (hash >= 0) { body = line.slice(0, hash); comment = line.slice(hash); }
+    let html = esc(body).replace(/("""|"[^"]*"|'[^']*')/g, "\u0000$1\u0001");
+    html = html.split(/(\u0000[^\u0001]*\u0001)/).map((part) =>
+      part.startsWith("\u0000") ? `<span class="s">${part.slice(1, -1)}</span>` : part.replace(KW, '<span class="k">$1</span>')).join("");
+    if (comment) html += `<span class="c">${esc(comment)}</span>`;
+    return `<span class="l${hl.includes(i + 1) ? " hl" : ""}">${html}</span>`;
+  }).join("");
+}
+
+// shrink a code block just enough that its longest line fits (mono ≈ 0.6em per character)
+const codeSize = (code) => Math.min(16.5, Math.floor(640 / (0.61 * Math.max(...code.split("\n").map((l) => l.length))) * 10) / 10);
+const demoTag = (s) => s.demo ? `<span class="demo">▶ Demo · ${s.demo}</span>` : "";
+const head = (s) => `<header class="hd"><div class="hd-row"><span class="lbl">${s.lbl}</span>${demoTag(s)}</div><h2>${s.title}</h2></header>`;
+const note = (s) => s.note ? `<p class="note">${s.note}</p>` : "";
+
+const RENDER = {
+  title: () => `<span class="blob v"></span><span class="blob g"></span>
+    <div class="title-body">
+      <span class="lbl gold">AI Engineering · Week 7</span>
+      <h1>Give the agent<br><span class="mark-gold">a map.</span></h1>
+      <p class="title-sub">RAG and vector databases, built from scratch: chunking, embeddings, a vector store, incremental indexing, and “ask the codebase”.</p>
+      <div class="title-by"><img src="logo-mark.png" alt=""><div><strong>Pouria Jahandideh</strong><span>pjsofts.github.io · AI Engineering</span></div></div>
+    </div>`,
+  statement: (s) => `<div class="mid"><p class="stmt">${s.text}</p>${s.sub ? `<p class="stmt-sub">${s.sub}</p>` : ""}</div>`,
+  section: (s) => `<div class="mid"><span class="sec-n">${s.n}</span><h2>${s.title}</h2><p>${s.sub}</p></div>`,
+  agenda: () => `<header class="hd"><span class="lbl">Today</span><h2>Six parts, one pipeline</h2></header>
+    <ol class="agenda">${AGENDA.map(([n, t, l]) => `<li><span class="n">${n}</span><span class="t">${t}</span><span class="l">${l}</span></li>`).join("")}</ol>`,
+  points: (s) => `${head(s)}<ol class="pts">${s.points.map(([b, r], i) =>
+      `<li style="${s.dense ? "font-size:22px" : ""}"><span class="n">${String(i + 1).padStart(2, "0")}</span><span><strong>${b}</strong> <span class="rest">${r}</span></span></li>`).join("")}</ol>${note(s)}`,
+  compare: (s) => `${head(s)}<div class="cmp">${s.cols.map((c) =>
+      `<div class="col ${c.tone}"><h3>${c.h}</h3><ul>${c.items.map((i) => `<li>${i}</li>`).join("")}</ul>${c.pre ? `<pre>${esc(c.pre)}</pre>` : ""}</div>`).join("")}</div>${note(s)}`,
+  code: (s) => `<div class="code-grid">
+      <div class="code-copy"><span class="lbl">${s.lbl}</span><h2>${s.title}</h2><p>${s.caption}</p>${demoTag(s)}</div>
+      <div class="term"><div class="term-bar"><i></i><i></i><i></i><span>${s.file}</span></div><div class="term-body" style="font-size:${codeSize(s.code)}px">${highlight(s.code, s.hl)}</div></div>
+    </div>`,
+  table: (s) => `${head(s)}<table class="tbl"><thead><tr>${s.head.map((h) => `<th>${h}</th>`).join("")}</tr></thead>
+    <tbody>${s.rows.map((r) => `<tr>${r.map((c, j) => j === 0 ? `<th>${c}</th>` : `<td>${c}</td>`).join("")}</tr>`).join("")}</tbody></table>${note(s)}`,
+  pipeline: () => `<header class="hd"><div class="hd-row"><span class="lbl">The pipeline</span><span class="demo">▶ Demo · Step 3</span></div><h2>Two phases</h2></header>
+    <div class="lane"><div class="lane-name">Index time<small>once, then on changes</small></div>
+      <div class="box"><b>Find files</b><span>every .py, .js, .ts</span></div>
+      <div class="box"><b>Chunk</b><span>one piece per function or class</span></div>
+      <div class="box api"><b>Embed</b><span>each chunk → a vector</span></div>
+      <div class="box db"><b>Save</b><span>chunks + vectors in index.json</span></div></div>
+    <div class="lane"><div class="lane-name">Question time<small>every question</small></div>
+      <div class="box api"><b>Embed</b><span>the question → a vector</span></div>
+      <div class="box db"><b>Search</b><span>cosine vs every chunk, keep top k</span></div>
+      <div class="box"><b>Build prompt</b><span>the chunks + the question</span></div>
+      <div class="box llm"><b>Answer</b><span>with path:line citations</span></div></div>
+    <p class="note">Teal boxes call the <b>embedding model</b>. Only the last box calls the <b>chat model</b>.</p>`,
+  checklist: () => `<header class="hd"><span class="lbl">Project · Milestone 4</span><h2>mycode can read a codebase</h2></header>
+    <ul class="check">${CHECKLIST.map((c) => `<li>${c}</li>`).join("")}</ul>
+    <p class="note"><b>Stretch:</b> hybrid grep + semantic ranking · re-index on file save · RAG-written ARCHITECTURE.md · store vectors as compact binary.</p>`,
+  end: () => `<div class="mid end-body"><img src="logo.png" alt=""><h2>Questions?</h2>
+    <p>Next week: the brain. Plan mode, a todo list the agent keeps, and knowing when to stop.</p></div>`,
+};
+
+const stage = document.getElementById("stage");
+const INK = new Set(["statement", "section", "end"]);
+SLIDES.forEach((s, i) => {
+  const a = document.createElement("article");
+  a.className = `slide s-${s.t}${INK.has(s.t) ? " ink" : ""}`;
+  a.innerHTML = RENDER[s.t](s) + (s.t === "title" ? "" :
+    `<footer class="sfoot"><span class="brand"><img src="logo-mark.png" alt="">Pouria Jahandideh · Week 7 · RAG</span><span>${String(i + 1).padStart(2, "0")} / ${SLIDES.length}</span></footer>`);
+  stage.append(a);
+});
+
+// ------------------------------------------------------------------ navigation
+const slides = [...document.querySelectorAll(".slide")];
+const N = slides.length;
+let cur = 0;
+const fromHash = () => { const n = parseInt(location.hash.slice(1), 10); return Number.isFinite(n) ? Math.min(Math.max(n - 1, 0), N - 1) : 0; };
+function show(i) {
+  cur = Math.min(Math.max(i, 0), N - 1);
+  slides.forEach((s, j) => s.classList.toggle("on", j === cur));
+  document.getElementById("counter").textContent = `${cur + 1} / ${N}`;
+  document.getElementById("bar").style.width = `${((cur + 1) / N) * 100}%`;
+  history.replaceState(null, "", `#${cur + 1}`);
+}
+function fit() { document.documentElement.style.setProperty("--s", Math.min(innerWidth / 1280, (innerHeight - 52) / 720)); }
+function full() { document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen?.(); }
+document.addEventListener("keydown", (e) => {
+  if (e.metaKey || e.ctrlKey || e.altKey) return;
+  const k = e.key;
+  if (["ArrowRight", "PageDown", " ", "l"].includes(k)) show(cur + 1);
+  else if (["ArrowLeft", "PageUp", "h"].includes(k)) show(cur - 1);
+  else if (k === "Home") show(0);
+  else if (k === "End") show(N - 1);
+  else if (k === "f" || k === "F") full();
+  else return;
+  e.preventDefault();
+});
+document.querySelectorAll("[data-go]").forEach((b) => b.onclick = () => {
+  const go = b.dataset.go;
+  if (go === "next") show(cur + 1); else if (go === "prev") show(cur - 1); else if (go === "full") full(); else window.print();
+});
+addEventListener("resize", fit);
+addEventListener("hashchange", () => show(fromHash()));
+fit();
+show(fromHash());
+</script>
+</body>
+</html>
