@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Week 9 · Planning &amp; Memory</title>
+  <link rel="stylesheet" href="style.css?v=9">
+</head>
+<body>
+  <header class="topbar">
+    <button class="icon" id="toggle-sidebar" title="Steps (B)">☰</button>
+    <div class="titles">
+      <div class="eyebrow" id="wf-module"></div>
+      <h1 id="wf-title">Week 9 · Planning &amp; Memory</h1>
+    </div>
+    <div class="decides code" id="wf-decides-box" title="The one idea of this step">
+      <span class="q">Key idea</span>
+      <span class="a" id="wf-decides"></span>
+    </div>
+    <div class="controls">
+      <div class="seg" id="mode" title="Replay: no API key or network needed (M)">
+        <button data-value="replay">Replay</button>
+        <button data-value="live">Live</button>
+      </div>
+      <div class="seg" id="speed" title="Speed (− slower, = faster)">
+        <button data-value="slow">Slow</button>
+        <button data-value="normal">Normal</button>
+        <button data-value="fast">Fast</button>
+      </div>
+      <button class="toggle" id="step" title="Pause before every step (S)">Step</button>
+      <button class="primary" id="run" title="Run (Enter)">▶ Run</button>
+      <button class="primary next" id="next" title="Next step (Space / →)" disabled>Next ⏭</button>
+      <button id="stop" title="Stop (Esc)" disabled>■</button>
+      <button class="icon" id="help-btn" title="Shortcuts (?)">?</button>
+    </div>
+  </header>
+
+  <div class="app" id="app">
+    <nav class="sidebar" id="sidebar"></nav>
+
+    <main class="stage" id="stage">
+      <section class="left">
+        <div class="summary" id="wf-summary"></div>
+        <div class="input-row">
+          <label for="task">Input</label>
+          <div class="input-col">
+            <textarea id="task" rows="1" dir="auto" spellcheck="false"></textarea>
+            <div class="hint" id="wf-hint"></div>
+          </div>
+          <button class="icon small" id="reset-task" title="Restore the example input">↺</button>
+        </div>
+        <div class="diagram-wrap">
+          <svg id="diagram" preserveAspectRatio="xMidYMid meet"></svg>
+          <div class="legend">
+            <span><i class="swatch by-code"></i>the code decides</span>
+            <span><i class="swatch by-model"></i>the model decides</span>
+          </div>
+          <div class="status" id="status"></div>
+          <div class="popover hidden" id="popover"></div>
+        </div>
+        <div class="bottom" id="bottom">
+          <div class="panel-tabs">
+            <button data-panel="data" class="on">Data <span class="muted">conversation, todos, tests, files</span></button>
+            <button data-panel="trace">Trace <span class="muted">every call, prompt and reply</span></button>
+            <span class="panel-keys muted">D switch · L hide</span>
+          </div>
+          <div class="data-body" id="data"></div>
+          <div class="trace-body hidden" id="trace"></div>
+        </div>
+      </section>
+
+      <section class="right">
+        <div class="tabs" id="tabs"></div>
+        <div class="code-view" id="code"></div>
+      </section>
+    </main>
+  </div>
+
+  <div class="ask hidden" id="ask">
+    <div class="ask-card">
+      <div class="ask-who">input() · the agent proposes a plan and waits for you</div>
+      <pre id="ask-prompt"></pre>
+      <div class="ask-buttons">
+        <button class="yes" id="ask-yes">Yes <kbd>Y</kbd></button>
+        <button class="no" id="ask-no">No <kbd>N</kbd></button>
+      </div>
+    </div>
+  </div>
+
+  <div class="help hidden" id="help">
+    <div class="help-card">
+      <h2>Shortcuts</h2>
+      <table>
+        <tr><td><kbd>Enter</kbd></td><td>Run (Ctrl+Enter inside the input)</td></tr>
+        <tr><td><kbd>Space</kbd> <kbd>→</kbd></td><td>Next step (when paused)</td></tr>
+        <tr><td><kbd>↑</kbd> <kbd>↓</kbd></td><td>Previous / next step of the lesson</td></tr>
+        <tr><td><kbd>S</kbd></td><td>Step mode on / off</td></tr>
+        <tr><td><kbd>M</kbd></td><td>Replay / Live</td></tr>
+        <tr><td><kbd>-</kbd> <kbd>=</kbd></td><td>Slower / faster</td></tr>
+        <tr><td><kbd>Esc</kbd></td><td>Stop</td></tr>
+        <tr><td><kbd>Y</kbd> <kbd>N</kbd></td><td>Approve or reject the plan (step 2)</td></tr>
+        <tr><td><kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd></td><td>Diagram + code / diagram only / code only</td></tr>
+        <tr><td><kbd>[</kbd> <kbd>]</kbd></td><td>Previous / next code file</td></tr>
+        <tr><td><kbd>D</kbd></td><td>Data / Trace panel</td></tr>
+        <tr><td><kbd>L</kbd></td><td>Show / hide that panel</td></tr>
+        <tr><td><kbd>B</kbd></td><td>Show / hide the step list</td></tr>
+        <tr><td><kbd>Ctrl</kbd> <kbd>+</kbd> / <kbd>−</kbd></td><td>Zoom (browser)</td></tr>
+        <tr><td><kbd>T</kbd></td><td>Light / dark theme</td></tr>
+      </table>
+      <p class="muted" id="help-model"></p>
+    </div>
+  </div>
+
+  <script src="app.js?v=9"></script>
+</body>
+</html>

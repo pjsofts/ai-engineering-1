@@ -1,0 +1,11 @@
+[
+  {"id": "F1", "behavior": "GET /health returns 200",
+   "verify": "python -m unittest -q checks.test_health",
+   "deps": [], "state": "passing", "evidence": "checked at the start of the course"},
+  {"id": "F2", "behavior": "A new file ratelimit.py with two plain functions (no class): allow(client_ip) returns True for the first 5 requests per minute of each client, then False. reset() forgets every client.",
+   "verify": "python -m unittest -q checks.test_limiter",
+   "deps": ["F1"], "state": "not_started", "evidence": ""},
+  {"id": "F3", "behavior": "api.handle() answers the 6th request in a minute with 429 and a Retry-After header. /health is never limited.",
+   "verify": "python -m unittest -q checks.test_429",
+   "deps": ["F2"], "state": "not_started", "evidence": ""}
+]

@@ -1,0 +1,787 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Week 9 · Planning &amp; Memory — Slides</title>
+<link rel="icon" href="logo-mark.png">
+<style>
+@font-face { font-family: "Space Grotesk"; font-weight: 400 700; font-display: swap; src: url("fonts/space-grotesk.woff2") format("woff2"); }
+@font-face { font-family: "Inter"; font-weight: 100 900; font-display: swap; src: url("fonts/inter.woff2") format("woff2"); }
+@font-face { font-family: "JetBrains Mono"; font-weight: 100 800; font-display: swap; src: url("fonts/jetbrains-mono.woff2") format("woff2"); }
+
+/* The same brand as the course site: the studio. Brick white, denim navy, chair red, sticky-note yellow. */
+:root {
+  --paper: #f5f6f3; --paper-2: #e6e9e8; --card: #ffffff;
+  --ink: #1d2a44; --ink-soft: #4b5568;
+  --violet: #d42f26; --violet-deep: #a8231c; --violet-wash: #fbe6e4;
+  --gold: #f6d64a; --gold-deep: #8a5a26; --gold-wash: #fdf3c4;
+  --teal: #0f8f80; --teal-wash: #ddf3ef;
+  --rose: #c2416b;
+  --term-green: #7ddca4;
+  --rule: rgba(29, 42, 68, 0.12);
+  --display: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+}
+* { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; }
+body { overflow: hidden; background: #0b0918; font-family: var(--sans); color: var(--ink); }
+h1, h2, h3 { font-family: var(--display); font-weight: 700; letter-spacing: -0.03em; line-height: 1.02; margin: 0; text-wrap: balance; }
+p { margin: 0; }
+code, .mono { font-family: var(--mono); }
+
+.viewport { position: fixed; inset: 0 0 52px 0; display: grid; place-items: center; }
+.stage { width: 1280px; height: 720px; position: relative; transform: scale(var(--s, 1)); flex: none; }
+
+/* ---------------- a slide ---------------- */
+.slide { position: absolute; inset: 0; display: none; flex-direction: column; padding: 60px 84px 80px; background: var(--paper); overflow: hidden; box-shadow: 0 40px 80px -40px rgba(0,0,0,.8); }
+.slide.on { display: flex; }
+.slide.ink { background: var(--ink); color: #d9d3f5; }
+
+.lbl { display: inline-flex; align-items: center; gap: .6ch; font: 600 14px var(--mono); letter-spacing: .16em; text-transform: uppercase; color: var(--violet-deep); }
+.lbl::before { content: ""; width: 22px; height: 2px; background: var(--violet); }
+.lbl.gold { color: var(--gold-deep); } .lbl.gold::before { background: var(--gold-deep); }
+.hd { margin-bottom: 30px; }
+.hd h2 { margin-top: 14px; font-size: 52px; }
+.hd-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; }
+.demo { flex: none; margin-top: 2px; font: 600 15px var(--mono); padding: 7px 13px; border-radius: 8px; background: var(--ink); color: var(--gold); letter-spacing: .02em; }
+
+.sfoot { position: absolute; left: 84px; right: 84px; bottom: 26px; display: flex; justify-content: space-between; align-items: center; padding-top: 12px; border-top: 1px solid var(--rule); font: 13px var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-soft); }
+.sfoot .brand { display: inline-flex; gap: 10px; align-items: center; color: var(--violet-deep); }
+.sfoot img { width: 20px; height: 20px; border-radius: 5px; }
+.ink .sfoot { border-top-color: rgba(233,228,255,.14); color: #8e87b8; }
+.ink .sfoot .brand { color: #c3bce8; }
+
+.note { margin-top: auto; padding: 15px 22px; font-size: 21px; line-height: 1.45; background: var(--gold-wash); border-left: 4px solid var(--gold); border-radius: 3px; }
+.note b { font-weight: 650; }
+
+/* title */
+.s-title { justify-content: center; }
+.blob { position: absolute; border-radius: 50%; }
+.blob.v { display: none; }
+.blob.g { display: none; }
+.title-body { position: relative; }
+.s-title h1 { margin-top: 26px; font-size: 100px; line-height: .98; }
+.s-title { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='96' height='68'%3E%3Cg stroke='%231d2a44' stroke-opacity='.06' fill='none'%3E%3Cpath d='M0 .5H96M0 34.5H96M.5 0V34M48.5 34V68'/%3E%3C/g%3E%3C/svg%3E"); background-size: 96px 68px; }
+.s-title .lbl.gold { padding: 7px 12px; background: var(--gold); color: var(--ink); border-radius: 2px; transform: rotate(-1.5deg); box-shadow: 0 6px 10px -6px rgba(29,42,68,.45); }
+.s-title .lbl.gold::before { display: none; }
+.mark-gold { background: linear-gradient(transparent 62%, var(--gold) 62%, var(--gold) 94%, transparent 94%); padding: 0 .06em; }
+.title-sub { margin-top: 28px; font-size: 27px; max-width: 36ch; color: var(--ink-soft); line-height: 1.4; }
+.title-by { display: flex; align-items: center; gap: 18px; margin-top: 50px; }
+.title-by img { width: 52px; height: 52px; border-radius: 12px; }
+.title-by strong { display: block; font: 700 26px var(--display); }
+.title-by span { font: 15px var(--mono); color: var(--ink-soft); }
+
+/* section / statement / end */
+.mid { margin: auto 0; }
+.sec-n { font: 600 30px var(--mono); color: var(--gold); letter-spacing: .1em; }
+.s-section .mid::before { content: ""; display: block; width: 96px; height: 6px; background: var(--gold); margin-bottom: 40px; }
+.s-section h2 { margin-top: 18px; font-size: 100px; color: #fff; }
+.s-section p { margin-top: 26px; font-size: 30px; color: #a49dd0; }
+.stmt { font: 700 66px/1.08 var(--display); letter-spacing: -0.03em; color: #fff; max-width: 21ch; text-wrap: balance; }
+.stmt-sub { margin-top: 34px; font-size: 28px; line-height: 1.4; color: #a49dd0; max-width: 50ch; padding-left: 22px; border-left: 4px solid var(--gold); }
+.end-body h2 { font-size: 84px; color: #fff; }
+.end-body p { margin-top: 22px; font-size: 26px; color: #a49dd0; max-width: 46ch; line-height: 1.45; }
+.end-body img { width: 130px; height: 130px; border-radius: 16px; margin-bottom: 30px; }
+
+/* agenda */
+.agenda { list-style: none; margin: 0; padding: 0; display: grid; gap: 11px; }
+.agenda li { display: grid; grid-template-columns: 56px 380px 1fr; align-items: baseline; gap: 18px; padding: 13px 22px; background: var(--card); border: 1px solid var(--rule); border-left: 4px solid var(--violet); border-radius: 10px; }
+.agenda .n { font: 600 21px var(--mono); color: var(--violet-deep); }
+.agenda .t { font: 700 26px var(--display); letter-spacing: -0.02em; }
+.agenda .l { font-size: 18px; color: var(--ink-soft); }
+
+/* points */
+.pts { list-style: none; margin: 0; padding: 0; display: grid; gap: 22px; }
+.pts li { display: grid; grid-template-columns: 52px 1fr; gap: 12px; font-size: 25px; line-height: 1.38; color: var(--ink-soft); }
+.pts .n { font: 600 20px var(--mono); color: var(--violet); padding-top: 4px; }
+.pts strong { display: block; color: var(--ink); font: 700 1em var(--display); letter-spacing: -0.01em; }
+.pts .rest { font-size: .88em; }
+
+/* compare */
+.cmp { display: grid; grid-template-columns: 1fr 1fr; gap: 26px; margin-bottom: 24px; }
+.col { padding: 24px 28px; border-radius: 12px; border: 1px solid var(--rule); }
+.col h3 { font-size: 28px; margin-bottom: 14px; }
+.col ul { margin: 0; padding-left: 22px; display: grid; gap: 10px; }
+.col li { font-size: 21px; line-height: 1.38; color: var(--ink-soft); }
+.col.violet { background: var(--violet-wash); border-color: rgba(109,75,208,.28); }
+.col.gold { background: var(--gold-wash); border-color: rgba(201,163,56,.4); }
+.col.ink { background: var(--ink); border-color: var(--ink); }
+.col.ink h3 { color: #fff; } .col.ink li { color: #c3bce8; }
+.col pre { margin: 12px 0 0; font: 16px/1.5 var(--mono); white-space: pre-wrap; }
+.col.ink pre { color: var(--gold); }
+
+/* code */
+.code-grid { display: grid; grid-template-columns: .56fr 1.44fr; gap: 36px; align-items: center; flex: 1; min-height: 0; }
+.code-copy h2 { margin-top: 14px; font-size: 46px; }
+.code-copy p { margin-top: 20px; font-size: 21px; line-height: 1.5; color: var(--ink-soft); }
+.code-copy .demo { display: inline-block; margin-top: 22px; }
+.term { font-variant-ligatures: none; background: var(--ink); border-radius: 14px; overflow: hidden; font-family: var(--mono); box-shadow: 0 2px 4px rgba(29,42,68,.06), 0 14px 26px -16px rgba(29,42,68,.4); }
+.term-bar { display: flex; align-items: center; gap: 7px; padding: 10px 14px; background: #100d24; border-bottom: 1px solid rgba(233,228,255,.12); }
+.term-bar i { width: 11px; height: 11px; border-radius: 50%; background: #3b3566; }
+.term-bar i:first-child { background: var(--gold); }
+.term-bar span { margin-left: auto; font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: #6f68a3; }
+.term-body { padding: 18px 22px 22px; color: #e9e4ff; font-size: 16.5px; line-height: 1.58; }
+.term-body .l { display: block; white-space: pre; min-height: 1.58em; }
+.term .k { color: #b49bff; } .term .s { color: var(--term-green); } .term .c { color: #8c85bd; font-style: italic; } .term .hl { background: rgba(232,198,90,.16); box-shadow: -22px 0 0 rgba(232,198,90,.16), 22px 0 0 rgba(232,198,90,.16); }
+
+/* table */
+.tbl { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 21px; background: var(--card); border: 1px solid var(--rule); border-radius: 12px; overflow: hidden; }
+.tbl thead th { font-size: 14px; letter-spacing: .12em; text-transform: uppercase; padding: 13px 20px; background: var(--ink); color: #fff; text-align: left; }
+.tbl tbody th { font: 700 22px var(--display); text-align: left; padding: 13px 20px; border-bottom: 1px solid var(--rule); white-space: nowrap; }
+.tbl td { padding: 13px 20px; color: var(--ink-soft); border-bottom: 1px solid var(--rule); }
+.tbl tbody tr:last-child > * { border-bottom: 0; }
+.tbl .big { font: 700 26px var(--display); color: var(--ink); }
+.tbl .hot { color: var(--rose); font-weight: 650; }
+
+/* pipeline */
+.lane { display: grid; grid-template-columns: 150px repeat(4, 1fr); gap: 14px; align-items: center; margin-bottom: 18px; }
+.lane-name { font: 600 14px var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--violet-deep); }
+.lane-name small { display: block; margin-top: 4px; font: 14px var(--sans); letter-spacing: 0; text-transform: none; color: var(--ink-soft); }
+.box { position: relative; padding: 16px 16px; border-radius: 12px; background: var(--card); border: 2px solid var(--rule); min-height: 104px; }
+.box b { display: block; font: 700 22px var(--display); }
+.box span { display: block; margin-top: 4px; font-size: 16px; color: var(--ink-soft); line-height: 1.35; }
+.box.api { border-color: var(--teal); background: var(--teal-wash); }
+.box.db { border-color: var(--rose); }
+.box.llm { border-color: var(--violet); background: var(--violet-wash); }
+.box:not(:last-child)::after { content: "→"; position: absolute; right: -16px; top: 50%; transform: translateY(-50%); font: 700 20px var(--display); color: var(--ink-soft); }
+
+/* checklist */
+.check { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 12px 30px; }
+.check li { display: grid; grid-template-columns: 30px 1fr; font-size: 20px; line-height: 1.4; color: var(--ink); }
+.check li::before { content: "☐"; color: var(--violet); font-size: 22px; line-height: 1.25; }
+
+/* controls */
+.controls { position: fixed; left: 0; right: 0; bottom: 0; height: 52px; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; padding: 0 18px; font: 13px var(--mono); color: #a49dd0; }
+.mid-ctl { display: flex; gap: 14px; align-items: center; }
+.right-ctl { justify-self: end; display: flex; gap: 8px; }
+.controls button { font: inherit; color: #e9e4ff; background: rgba(233,228,255,.08); border: 1px solid rgba(233,228,255,.16); border-radius: 6px; padding: 5px 11px; cursor: pointer; }
+.controls button:hover { border-color: var(--gold); color: var(--gold); }
+.progress { position: fixed; left: 0; right: 0; bottom: 52px; height: 3px; background: rgba(233,228,255,.08); }
+.progress i { display: block; height: 100%; width: 0; background: var(--gold); transition: width .2s; }
+:fullscreen .controls, :fullscreen .progress { opacity: 0; } :fullscreen .controls:hover { opacity: 1; } :fullscreen .viewport { inset: 0; }
+
+
+/* a two-column agenda, and denser point lists */
+.agenda.two { grid-template-columns: 1fr 1fr; gap: 12px 18px; }
+.agenda.two li { grid-template-columns: 48px 1fr; padding: 12px 20px; }
+.agenda.two .t { display: block; font-size: 25px; }
+.agenda.two .l { display: block; margin-top: 2px; }
+.pts.dense { gap: 14px; }
+.pts.dense li { font-size: 23px; }
+.lane { grid-template-columns: 170px repeat(4, 1fr); }
+
+@media print {
+  @page { size: 1280px 720px; margin: 0; }
+  html, body { height: auto; overflow: visible; background: none; }
+  .viewport { position: static; display: block; }
+  .stage { transform: none; height: auto; }
+  .slide { display: flex !important; position: relative; width: 1280px; height: 720px; box-shadow: none; break-after: page; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .controls, .progress { display: none; }
+}
+</style>
+</head>
+<body>
+<div class="viewport"><div class="stage" id="stage"></div></div>
+<nav class="controls">
+  <span>Week 9 · Planning &amp; Memory</span>
+  <div class="mid-ctl"><button data-go="prev">←</button><span id="counter"></span><button data-go="next">→</button></div>
+  <div class="right-ctl"><button data-go="full">⛶ F</button><button data-go="print">PDF</button></div>
+</nav>
+<div class="progress"><i id="bar"></i></div>
+
+<script>
+// ------------------------------------------------------------------ the deck
+// Each slide is one object. `demo` adds a tag saying which step of the
+// visualizer (python server.py → http://127.0.0.1:8770) to switch to.
+// Every code block is copied from the files in planning/ (a few lines are
+// left out to fit, marked ...), so what students see here is what they run.
+const P0 = "00 · The eager agent", P1 = "01 · The todo list", P2 = "02 · Plan mode",
+      P3 = "03 · Feature lists", P4 = "04 · Maker and checker", P5 = "05 · Sessions",
+      P6 = "06 · User memory", P7 = "07 · The handoff";
+
+const SLIDES = [
+  { t: "title" },
+  { t: "statement", text: "An agent with tools and no plan does too much, or stops too early.",
+    sub: "This week mycode learns restraint (plan first, and let the harness decide what “done” means) and memory (pick up where it left off, days later)." },
+  { t: "agenda" },
+  { t: "points", lbl: "The problem", title: "Two ways an eager agent fails", points: [
+    ["It overreaches", "“Add rate limiting” becomes a framework, a config file, and a refactor nobody asked for."],
+    ["It stops too early", "It says “done” when the code looks done, before anything was run."],
+    ["Same cause", "There is no written plan, and no honest definition of done. So it optimizes for looking busy, not for being finished."],
+  ] },
+  { t: "compare", lbl: "This week", title: "Two halves", cols: [
+    { h: "Restraint · steps 1–4", tone: "gold", items: ["A todo list: one task at a time", "Plan mode: look first, change later", "Feature lists: a check decides “done”", "Maker and checker: never grade yourself"] },
+    { h: "Memory · steps 5–7", tone: "violet", items: ["Sessions: a conversation saved to a file", "User memory: facts about you, in every project", "The handoff: PROGRESS.md for the next session", "Everything is a plain file. No database."] },
+  ], note: "<b>The agent loop never changes this week.</b> We change what tools it gets, what it is told, and who decides it is done." },
+  { t: "points", lbl: "In class", title: "How to use the visualizer", points: [
+    ["python server.py", "Open http://127.0.0.1:8770, pick a step, press Enter. The slides are at /slides/."],
+    ["Replay or Live", "Replay needs no API key, and the tools still run for real: files change, tests really pass or fail. Live calls the model."],
+    ["Watch three things", "The diagram: which function runs. The code: which line runs. The Data panel: the todo list, test results, files."],
+    ["Every step also runs alone", "cd planning, then python step2_plan_mode.py"],
+  ] },
+  { t: "code", lbl: "The project", title: "What the agent works on", file: "planning/sample_project/api.py",
+    caption: "A tiny API with 4 tests. Every step asks for the same thing: rate limiting, 5 requests per minute per client, then 429. The agent works on a fresh copy each run.",
+    code: `from users import find_user, list_users
+
+
+def handle(method, path, client_ip):
+    if path == "/health":
+        return 200, {}, "ok"
+
+    if method == "GET" and path == "/users":
+        return 200, {}, list_users()
+
+    if method == "GET" and path.startswith("/users/"):
+        user = find_user(path.split("/")[-1])
+        if user is None:
+            return 404, {}, "no such user"
+        return 200, {}, user
+
+    return 404, {}, "not found"` },
+
+  // ---------------------------------------------------------------- 00
+  { t: "section", n: "00", title: "The eager agent", sub: "Every tool, no plan, a vague task" },
+  { t: "code", lbl: P0, title: "Let it run, then check", demo: "Step 0", file: "planning/step0_eager_agent.py",
+    caption: "The loop from week 1 with every tool. When it says “done”, we don't take its word: we count the files it touched and run the tests ourselves.",
+    code: `def run(task):
+    messages = [
+        {"role": "system", "content": SYSTEM},
+        {"role": "user", "content": task},
+    ]
+    answer = run_agent(messages, LOOK + CHANGE + CHECK)
+
+    changed = changed_files()      # what did it touch?
+    tests = run_tests()            # does it still work?
+
+    return (f"The agent says: {answer}\\n\\n"
+            f"Files changed: {len(changed)}  ({', '.join(changed)})\\n"
+            f"Tests: {tests.splitlines()[0]}")`, hl: [8,  9] },
+  { t: "statement", text: "It said “Everything should work.” The tests failed.",
+    sub: "5 files changed for one small feature: two strategies and a config file nobody asked for, and find_user renamed “while it was there”. It never ran the tests. That rename broke the API." },
+  { t: "table", lbl: P0, title: "Each failure has a fix", head: ["What went wrong", "The fix", "Step"], rows: [
+    ["No written plan: it wandered", "a todo list it must keep", "1"],
+    ["It changed code before it understood it", "plan mode: read-only, then you approve", "2"],
+    ["It decided it was done", "a check that must pass", "3"],
+    ["Nobody looked at its work", "a second agent that doesn't believe it", "4"],
+  ] },
+
+  // ---------------------------------------------------------------- 01
+  { t: "section", n: "01", title: "The todo list", sub: "One task in progress, written down" },
+  { t: "points", lbl: P1, title: "Why a todo list helps", points: [
+    ["It commits", "Writing the plan down makes the model choose one. A plan in its head changes every turn."],
+    ["It stays on track", "The list is in the conversation, so the model sees it again on every call."],
+    ["You see progress", "▶ doing, ✔ done, ○ later. No guessing what it is up to."],
+  ], note: "<b>The one rule:</b> only ONE task in progress at a time. That rule is the whole discipline." },
+  { t: "code", lbl: P1, title: "write_todos: one tool, one rule", file: "planning/todos.py",
+    caption: "The model sends the whole list every time, one task per line. The tool checks the rule. Two tasks marked [>]? It answers with an error, and the model has to fix its list.",
+    code: `MARKS = {"[ ]": "pending", "[>]": "in_progress", "[x]": "done"}
+
+
+def write_todos(todos: str) -> str:
+    """Write your todo list. ..."""
+    items = []
+    for line in todos.strip().splitlines():
+        mark, task = line.strip()[:3], line.strip()[3:].strip()
+        if mark not in MARKS:
+            return f"Error: start every line with [ ], [>] or [x], not: {line!r}"
+        items.append({"task": task, "status": MARKS[mark]})
+
+    in_progress = [item for item in items if item["status"] == "in_progress"]
+    if len(in_progress) > 1:                                        # the rule
+        return f"Error: only ONE task can be [>]. You marked {len(in_progress)}."
+
+    TODOS[:] = items
+    return "Saved. Your list:\\n" + show_todos()`, hl: [14,  15] },
+  { t: "code", lbl: P1, title: "The docstring is the instruction", file: "planning/todos.py",
+    caption: "The model only sees the name, the parameters and this docstring. So it says when to use the tool, the exact format, and when to update it.",
+    code: `"""Write your todo list. Use it for any task with more than two steps.
+Send the WHOLE list every time, one task per line:
+    [x] a task that is done
+    [>] the ONE task you are working on now
+    [ ] a task for later
+Mark a task [>] before you start it and [x] as soon as it is done."""` },
+  { t: "code", lbl: P1, title: "Same loop, one more tool", demo: "Step 1", file: "planning/step1_todo_list.py",
+    caption: "Nothing else changes. The system prompt asks for a list before any change, and the tool is added to the list.",
+    code: `SYSTEM = """You are a coding agent working on a small Python project.
+Before you change anything, write a todo list with write_todos.
+Work on ONE task at a time and update the list as you go.
+Run the tests before you say you are done."""
+
+
+def run(task):
+    messages = [
+        {"role": "system", "content": SYSTEM},
+        {"role": "user", "content": task},
+    ]
+    answer = run_agent(messages, LOOK + CHANGE + CHECK + [write_todos])
+
+    return f"{answer}\\n\\nThe todo list at the end:\\n{show_todos()}"`, hl: [12] },
+  { t: "statement", text: "The first list breaks the rule. The tool says no.",
+    sub: "Two tasks marked [>]. write_todos returns an error, the model sends a fixed list, and then works through it one task at a time. A prompt asks; code enforces." },
+  { t: "points", lbl: P1, title: "Inside Claude Code", points: [
+    ["TodoWrite", "The same idea: the whole list on every call, exactly one task in_progress."],
+    ["A long description", "Its tool description is full of examples of when to use it, and when not to."],
+    ["Reminders", "If the model forgets the list for a few turns, the harness reminds it."],
+  ], note: "The data structure is easy. <b>The hard part is getting the model to use it</b>, and that is the docstring's job." },
+
+  // ---------------------------------------------------------------- 02
+  { t: "section", n: "02", title: "Plan mode", sub: "Look first. Change after you say yes." },
+  { t: "compare", lbl: P2, title: "Forbid it, or remove it?", cols: [
+    { h: "Forbid (a prompt)", tone: "violet", items: ["“Do not edit any files yet.”", "A request: the model can ignore it", "It often starts editing halfway through"], pre: "tools = LOOK + CHANGE + CHECK" },
+    { h: "Remove (the tool list)", tone: "gold", items: ["edit_file is not in the list", "A guarantee: it can't call what it doesn't have", "Same idea as least privilege"], pre: "tools = LOOK" },
+  ], note: "<b>The strongest rule is the one the code enforces.</b> In plan mode, the model only gets list_files, read_file and grep_search." },
+  { t: "code", lbl: P2, title: "Three phases", demo: "Step 2", file: "planning/step2_plan_mode.py",
+    caption: "Plan with read-only tools. A person approves. Then build, in the same conversation, so the model remembers everything it read.",
+    code: `def run(goal):
+    messages = [
+        {"role": "system", "content": PLAN_MODE},
+        {"role": "user", "content": goal},
+    ]
+    plan = plan_mode(messages)                 # 1. read-only
+
+    if not approved(plan):                     # 2. a person decides
+        return f"Plan rejected. Files changed: {len(changed_files())}"
+
+    answer = build_mode(messages)              # 3. every tool
+    return f"{answer}\\n\\nFiles changed: {', '.join(changed_files())}"`, hl: [6,  8,  11] },
+  { t: "code", lbl: P2, title: "The mode is the tool list", file: "planning/step2_plan_mode.py",
+    caption: "Leaving plan mode = a new system prompt, one user message, and more tools. approved() is the week 1 approval gate: input() becomes a Yes / No dialog in the visualizer.",
+    code: `def plan_mode(messages):
+    return run_agent(messages, LOOK)        # look: yes. change: impossible.
+
+
+def build_mode(messages):
+    messages[0] = {"role": "system", "content": BUILD_MODE}
+    messages.append({"role": "user", "content": "Plan approved. Go ahead."})
+    return run_agent(messages, LOOK + CHANGE + CHECK + [write_todos])
+
+
+def approved(plan):
+    answer = input(f"{plan}\\n\\nApprove this plan? [y/n] ")
+    return answer.strip().lower() == "y"`, hl: [2,  8] },
+  { t: "code", lbl: P2, title: "Ask for a plan you can check", file: "planning/step2_plan_mode.py",
+    caption: "Short and numbered, with file names. And one line people forget: what it will NOT change. That line is how you catch scope creep before it happens.",
+    code: `PLAN_MODE = """You are in PLAN MODE. You can only look: read and search.
+Explore first, then reply with a short numbered plan: which files you
+will change and how. Also say what you will NOT change.
+Do not write any code yet."""
+
+# What the model proposed (Replay):
+# 1. New file ratelimit.py: allow(client_ip), and reset() for tests.
+# 2. api.py: in handle(), right after /health, call allow().
+#    Over the limit, answer 429 with a Retry-After header.
+# 3. New file tests/test_ratelimit.py.
+# 4. Run all the tests.
+# Not changing: users.py, the existing tests.`, hl: [3,  12] },
+  { t: "statement", text: "Answer No first. Files changed: 0.",
+    sub: "Then run again and answer Yes: 3 files change, exactly the ones in the plan, and users.py is untouched. Compare that with step 0." },
+  { t: "points", lbl: P2, title: "Inside Claude Code", points: [
+    ["A permission mode", "Plan mode is a mode the harness enforces, with a strict reminder: no edits, this overrides other instructions."],
+    ["An approval dialog", "Approve and auto-accept edits, approve and review each edit, or keep planning with feedback."],
+    ["Short plans", "Plans are for deciding, not essays: delete prose, keep file paths."],
+  ] },
+
+  // ---------------------------------------------------------------- 03
+  { t: "section", n: "03", title: "Feature lists", sub: "The harness owns “done”" },
+  { t: "points", lbl: P3, title: "Don't let the model grade itself", points: [
+    ["It grades generously", "“I wrote the code, so it is done.” Nothing was run."],
+    ["Take the decision away", "Each feature has a command that checks it. Only that command passing can mark it done."],
+    ["The model writes code", "It never edits the state, and it can't change the checks: write_file refuses anything in checks/."],
+  ] },
+  { t: "code", lbl: P3, title: "The plan is data", file: "planning/sample_project/features.json",
+    caption: "Each feature: what it does, the command that checks it, what it depends on, and its state. The harness reads and writes this file, never the model.",
+    code: `[
+  {"id": "F1", "behavior": "GET /health returns 200",
+   "verify": "python -m unittest -q checks.test_health",
+   "deps": [], "state": "passing"},
+  {"id": "F2", "behavior": "A new file ratelimit.py ... allow(client_ip) ...",
+   "verify": "python -m unittest -q checks.test_limiter",
+   "deps": ["F1"], "state": "not_started"},
+  {"id": "F3", "behavior": "... the 6th request in a minute ... 429 ...",
+   "verify": "python -m unittest -q checks.test_429",
+   "deps": ["F2"], "state": "not_started"}
+]`, hl: [3, 6, 9] },
+  { t: "code", lbl: P3, title: "Pick the next one, check it", file: "planning/features.py",
+    caption: "next_feature() is the scheduler: the first feature that isn't passing yet, and whose dependencies all pass. verify() runs the command. Its exit code is the only judge.",
+    code: `def next_feature(features):
+    """The first feature that is not passing yet, whose dependencies all pass."""
+    passing = [f["id"] for f in features if f["state"] == "passing"]
+    for feature in features:
+        ready = all(dep in passing for dep in feature["deps"])
+        if feature["state"] != "passing" and ready:
+            return feature
+    return None
+
+
+def verify(feature):
+    """Run the feature's check. True only if the command succeeds."""
+    output = run_command(feature["verify"])
+    return output.startswith("PASSED"), output`, hl: [13,  14] },
+  { t: "code", lbl: P3, title: "The harness runs the loop", demo: "Step 3", file: "planning/step3_feature_list.py",
+    caption: "One feature at a time. The model builds it; the check decides. A failure goes back to the model as the error output. Still failing after MAX_TRIES? Stop and get a person.",
+    code: `while True:
+    feature = next_feature(features)      # the harness picks one
+    if feature is None:
+        return f"All done: {progress(features)}"
+
+    error = ""
+    for attempt in range(1, MAX_TRIES + 1):
+        build(feature, error)             # the model writes code
+        passed, output = verify(feature)  # the harness decides
+        if passed:
+            break
+        error = output                    # show the model what failed
+
+    feature["state"] = "passing" if passed else "failing"
+    feature["evidence"] = output
+    save_features(features)
+
+    if not passed:
+        return (f"Stopped: {feature['id']} still fails after "
+                f"{MAX_TRIES} tries. A person should look.")`, hl: [8,  9] },
+  { t: "statement", text: "F3: “done!” Then the check: FAILED.",
+    sub: "The first try answers 429 but forgets the Retry-After header. The model said it was done. The check said no, its error went back, and the second try passed." },
+  { t: "table", lbl: P3, title: "Own your control flow", head: ["When", "The loop…", "Example"], rows: [
+    ["A tool returns", "continues", "read_file, grep_search, run_tests"],
+    ["A person must decide", "stops and waits", "approve the plan (step 2)"],
+    ["A check passes", "moves to the next feature", "verify(F2) → F3"],
+    ["The model asks for no tools", "ends this agent's turn", "“F3 is done!” (then we check)"],
+    ["MAX_TRIES or MAX_STEPS", "gives up and asks a person", "“A person should look.”"],
+  ], note: "You wrote the loop, so you choose what happens <b>between choosing a tool and running it</b>, and between “done” and done." },
+
+  // ---------------------------------------------------------------- 04
+  { t: "section", n: "04", title: "Maker and checker", sub: "The worker never grades its own work" },
+  { t: "statement", text: "Ask an agent if it is done, and it says yes.",
+    sub: "Some goals are not one test command: “and document it in the README”. So a second agent checks: a fresh conversation, told to be strict, that can look but not change." },
+  { t: "code", lbl: P4, title: "Loop until the checker agrees", demo: "Step 4", file: "planning/step4_maker_checker.py",
+    caption: "The maker works. The checker decides. A FAILED verdict goes back to the maker as feedback. After MAX_ROUNDS, a person takes over.",
+    code: `def run(goal):
+    feedback = ""
+    for round_number in range(1, MAX_ROUNDS + 1):
+        make(goal, feedback)                # the maker works
+        verdict = check(goal)               # a different agent decides
+        if verdict.startswith("PASSED"):
+            return f"Goal met in round {round_number}. {verdict}"
+        feedback = verdict                  # the maker sees why
+
+    return (f"Not met after {MAX_ROUNDS} rounds. A person should look.\\n"
+            f"Last verdict: {feedback}")`, hl: [4,  5] },
+  { t: "code", lbl: P4, title: "The checker", file: "planning/step4_maker_checker.py",
+    caption: "A new conversation, so it has none of the maker's excuses. Read-only tools plus run_tests. And the most important line: if it is not sure, it FAILED.",
+    code: `CHECKER = """You are a strict reviewer. Check if the goal is REALLY met:
+run the tests and read the files. Do not trust what anyone says.
+Reply with one line: "PASSED: <why>" or "FAILED: <what is missing>".
+If you are not sure, it FAILED."""
+
+
+def check(goal):
+    messages = [
+        {"role": "system", "content": CHECKER},
+        {"role": "user", "content": f"The goal: {goal}"},
+    ]
+    return run_agent(messages, LOOK + CHECK).strip()   # look, not change`, hl: [4,  12] },
+  { t: "compare", lbl: P4, title: "Two agents, two jobs", cols: [
+    { h: "Maker", tone: "gold", items: ["Every tool, and a todo list", "Wants to finish", "Sees the checker's feedback", "Says “done!” a lot"] },
+    { h: "Checker", tone: "violet", items: ["Read-only tools + run_tests", "Wants to find what's missing", "Starts fresh every round", "Defaults to FAILED"] },
+  ] },
+  { t: "statement", text: "Round 1: the tests pass. FAILED anyway.",
+    sub: "“README.md does not mention the rate limit.” A test would never catch that. In round 2 the maker documents it, and the checker says PASSED." },
+  { t: "points", lbl: P4, title: "Making checkers good", points: [
+    ["The checker sets the quality bar", "A lazy checker (“looks done”) lets every bug through. Exercise 2."],
+    ["Give it real ways to check", "Tests, a command, a browser. A checker that only reads is guessing."],
+    ["Someone must not believe you", "Separate conversation, separate prompt, and a default of FAILED."],
+    ["Cap the rounds", "Maker and checker can disagree forever. Escalate to a person."],
+  ] },
+
+  // ---------------------------------------------------------------- memory
+  { t: "statement", text: "Restraint: done. Now: memory.",
+    sub: "Close the terminal and everything is gone. The next three steps make the agent remember, at three different lifetimes, with three plain files." },
+  { t: "table", lbl: "Memory", title: "Three lifetimes, three files", head: ["Lifetime", "File", "Holds", "Step"], rows: [
+    ["One conversation", "~/.mycode/sessions/monday.jsonl", "every message, as it happened", "5"],
+    ["You, the user", "~/.mycode/memory.md", "facts about you, for every project", "6"],
+    ["This project", "PROGRESS.md (in the repo)", "done, next, notes", "7"],
+  ], note: "And from week 7: <b>AGENTS.md</b>, the project's rules. Different lifetime, different file. Mixing them up is the most common memory bug." },
+
+  // ---------------------------------------------------------------- 05
+  { t: "section", n: "05", title: "Sessions and resume", sub: "One line per message, saved live" },
+  { t: "code", lbl: P5, title: "A list that saves itself", file: "planning/sessions.py",
+    caption: "A Session is a normal list of messages. Its append() also writes the message to a file, right away. The agent loop doesn't change at all.",
+    code: `class Session(list):
+    """A list of messages that also writes each new message to a file."""
+
+    def __init__(self, name, messages=()):
+        super().__init__(messages)
+        self.path = SESSIONS / f"{name}.jsonl"
+
+    def append(self, message):
+        super().append(message)                   # in memory, as before
+        self.path.parent.mkdir(parents=True, exist_ok=True)
+        with open(self.path, "a") as file:        # and on disk, right away
+            file.write(json.dumps(message) + "\\n")
+
+
+def resume_session(name):
+    """Read the file back: one line, one message."""
+    lines = (SESSIONS / f"{name}.jsonl").read_text().splitlines()
+    return Session(name, [json.loads(line) for line in lines])`, hl: [11,  12] },
+  { t: "code", lbl: P5, title: "Monday, then Tuesday", demo: "Step 5", file: "planning/step5_sessions.py",
+    caption: "Monday's session object is gone when monday() returns. Only the file is left. On Tuesday the model answers a follow-up without reading a single file: it is all in the session.",
+    code: `def monday():
+    session = start_session("monday")
+    session.append({"role": "system", "content": SYSTEM})
+    session.append({"role": "user", "content": FIRST_QUESTION})
+    run_agent(session, LOOK)
+
+
+def tuesday(question):
+    session = resume_session("monday")       # the whole conversation, back
+    session.append({"role": "user", "content": question})
+    return run_agent(session, LOOK)`, hl: [9] },
+  { t: "code", lbl: P5, title: "What is on disk", file: "~/.mycode/sessions/monday.jsonl",
+    caption: "JSONL: one JSON object per line. Adding a line never rewrites the file, so a crash loses at most one message. And you can read it, grep it, and diff it.",
+    code: `{"role": "system", "content": "You are a coding agent ..."}
+{"role": "user", "content": "Read api.py and users.py. How ...?"}
+{"role": "assistant", "tool_calls": [... read_file ...]}
+{"role": "tool", "tool_call_id": "call_1", "content": "# api.py ..."}
+{"role": "tool", "tool_call_id": "call_2", "content": "# users.py ..."}
+{"role": "assistant", "content": "handle() in api.py calls find_user ..."}
+{"role": "user", "content": "Yesterday you looked at how ..."}
+{"role": "assistant", "content": "It's find_user(user_id) in users.py ..."}` },
+  { t: "points", lbl: P5, title: "Sessions in real tools", points: [
+    ["Claude Code", "Every conversation is a .jsonl file under ~/.claude/projects/. claude --resume picks one, claude --continue takes the last."],
+    ["Saved live, not at the end", "Saving only at exit loses everything on a crash or Ctrl+C."],
+    ["Resuming has a cost", "The whole history is sent again. Long sessions need compaction (week 7), or a handoff (step 7)."],
+  ] },
+
+  // ---------------------------------------------------------------- 06
+  { t: "section", n: "06", title: "User memory", sub: "What the agent knows about you" },
+  { t: "code", lbl: P6, title: "remember() is a tool", file: "planning/memory.py",
+    caption: "Saving is a tool the model decides to call. Its docstring sets the rule for what belongs here: lasting facts about the user, not about this task or this project.",
+    code: `MEMORY_FILE = MYCODE_HOME / "memory.md"
+
+
+def remember(fact: str) -> str:
+    """Save a lasting fact about the user: their name, a preference,
+    how they like to work. Only save what will still be true next month,
+    in a different project. Do NOT save facts about this task or project."""
+    MEMORY_FILE.parent.mkdir(parents=True, exist_ok=True)
+    with open(MEMORY_FILE, "a") as file:
+        file.write(f"- {fact}\\n")
+    return f"Saved to memory: {fact}"`, hl: [6,  7] },
+  { t: "code", lbl: P6, title: "Memory goes into every new session", demo: "Step 6", file: "planning/step6_user_memory.py",
+    caption: "Two sessions, two projects, nothing shared but one file. Session 2 has a fresh conversation, but its system prompt already knows Sara.",
+    code: `def run(task):
+    new_session("I'm Sara. I always want type hints and a one-line docstring. "
+                "Also, this project runs on port 8080.")      # project A
+    return new_session(task)                               # project B, later
+
+
+def new_session(user_message):
+    system = SYSTEM.format(memory=load_memory())   # every session starts here
+    messages = [
+        {"role": "system", "content": system},
+        {"role": "user", "content": user_message},
+    ]
+    return run_agent(messages, [remember])`, hl: [8] },
+  { t: "statement", text: "It saved Sara. It did not save the port.",
+    sub: "“Port 8080” is about project A. In project B it would be wrong, and wrong memory is worse than no memory. In session 2: type hints and a docstring, without being asked." },
+  { t: "points", lbl: P6, title: "Memory goes wrong quietly", points: [
+    ["Wrong scope", "A project fact in user memory follows you into every other project."],
+    ["Stale facts", "People change their minds. Let the agent replace a fact, not only add one."],
+    ["Too much", "All of memory goes into every prompt. Keep it short."],
+    ["Private", "It is a plain file: the user can read it, edit it, and delete it."],
+  ] },
+
+  // ---------------------------------------------------------------- 07
+  { t: "section", n: "07", title: "The handoff", sub: "A note for the next session" },
+  { t: "code", lbl: P7, title: "Two sessions, one file between them", demo: "Step 7", file: "planning/step7_handoff.py",
+    caption: "Session 1 does part of the work. Then the harness asks for PROGRESS.md: it doesn't hope the model remembers. Session 2 starts with no history at all.",
+    code: `def first_session(task):
+    messages = [
+        {"role": "system", "content": SYSTEM},
+        {"role": "user", "content": task},
+    ]
+    run_agent(messages, LOOK + CHANGE + CHECK)
+
+    # The harness asks for the handoff. It doesn't hope the model remembers.
+    messages.append({"role": "user", "content": HANDOFF})
+    return run_agent(messages, LOOK + CHANGE)
+
+
+def next_session():
+    messages = [                       # a fresh conversation: no history
+        {"role": "system", "content": SYSTEM},
+        {"role": "user", "content": CONTINUE},
+    ]
+    return run_agent(messages, LOOK + CHANGE + CHECK)`, hl: [9,  14] },
+  { t: "code", lbl: P7, title: "What session 2 reads", file: "PROGRESS.md (written by session 1)",
+    caption: "Done, next, notes. Concrete: file names and commands. The Notes are the part a fresh agent would get wrong on its own.",
+    code: `# Progress: rate limiting
+
+## Done
+- ratelimit.py: allow(client_ip), 5 requests per minute per client.
+  reset() forgets every client.
+
+## Next
+1. api.py: in handle(), after /health, call allow().
+   Over the limit: 429 with a Retry-After header.
+2. tests/test_ratelimit.py: 5 pass, the 6th gets 429,
+   /health is never limited.
+3. Run: python -m unittest discover -s tests -t .
+
+## Notes
+- /health must never be limited.
+- Call ratelimit.reset() in each test's setUp.` },
+  { t: "compare", lbl: P7, title: "Resume, or hand off?", cols: [
+    { h: "Resume the session (step 5)", tone: "violet", items: ["Everything that was said", "Grows with every turn", "Old mistakes and dead ends included", "For the same person, same task"] },
+    { h: "Hand off (step 7)", tone: "gold", items: ["Only what matters now", "A page, not a transcript", "A clean start for a fresh context", "For the next session, another agent, or a person"] },
+  ], note: "Long-running agents work in many short sessions. <b>The handoff is what makes them add up.</b>" },
+
+  // ---------------------------------------------------------------- wrap up
+  { t: "week" },
+  { t: "points", lbl: "Practice", title: "Exercises", dense: true, points: [
+    ["Overreach, measured", "Run step 0 and step 2 on the same vague task, in Live. Count files changed and passing tests."],
+    ["The lying checker", "Change CHECKER to “say PASSED if it looks done”. Run step 4. What gets through?"],
+    ["Edit the plan", "In step 2, let the person type changes to the plan before approving. The agent builds the edited plan."],
+    ["Forget a fact", "Add forget(fact) to memory.py. Tell the agent “I don't need docstrings any more.”"],
+    ["/resume", "List the files in sessions/, pick one, and continue it. Show the last 3 messages first."],
+  ] },
+  { t: "checklist" },
+  { t: "end" },
+];
+
+const AGENDA = [
+  ["00", "The eager agent", "what goes wrong"],
+  ["01", "The todo list", "one task in progress"],
+  ["02", "Plan mode", "look, approve, then change"],
+  ["03", "Feature lists", "a check decides “done”"],
+  ["04", "Maker and checker", "never grade yourself"],
+  ["05", "Sessions", "a transcript, saved live"],
+  ["06", "User memory", "facts about you"],
+  ["07", "The handoff", "PROGRESS.md"],
+];
+
+const CHECKLIST = [
+  "write_todos is a tool, and it rejects two tasks in progress",
+  "Plan mode removes the tools that change things, not just forbids them",
+  "A person approves the plan before any file changes",
+  "A feature list where only a passing command marks “done”",
+  "A maker/checker loop; the checker starts fresh and defaults to FAILED",
+  "Retry and round limits that hand over to a person",
+  "Sessions saved line by line, and resumed from the file",
+  "User memory in its own file, loaded into every new session",
+  "A PROGRESS.md handoff that a fresh session can continue from",
+  "Everything is a plain file you can read: no database",
+];
+
+// ------------------------------------------------------------------ rendering
+const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+const KW = /\b(def|return|for|in|if|elif|not|or|and|import|from|else|while|lambda|class|try|except|as)\b/g;
+
+function highlight(code, hl = []) {
+  return code.split("\n").map((line, i) => {
+    let body = line, comment = "";
+    const hash = line.search(/#(?![^"]*"[^"]*$)/);
+    if (hash >= 0) { body = line.slice(0, hash); comment = line.slice(hash); }
+    let html = esc(body).replace(/("""|"[^"]*"|'[^']*')/g, "\u0000$1\u0001");
+    html = html.split(/(\u0000[^\u0001]*\u0001)/).map((part) =>
+      part.startsWith("\u0000") ? `<span class="s">${part.slice(1, -1)}</span>` : part.replace(KW, '<span class="k">$1</span>')).join("");
+    if (comment) html += `<span class="c">${esc(comment)}</span>`;
+    return `<span class="l${hl.includes(i + 1) ? " hl" : ""}">${html}</span>`;
+  }).join("");
+}
+
+// shrink a code block just enough that its longest line fits (mono ≈ 0.6em per character)
+const codeSize = (code) => Math.min(17, Math.floor(720 / (0.61 * Math.max(...code.split("\n").map((l) => l.length))) * 10) / 10);
+const demoTag = (s) => s.demo ? `<span class="demo">▶ Demo · ${s.demo}</span>` : "";
+const head = (s) => `<header class="hd"><div class="hd-row"><span class="lbl">${s.lbl}</span>${demoTag(s)}</div><h2>${s.title}</h2></header>`;
+const note = (s) => s.note ? `<p class="note">${s.note}</p>` : "";
+
+const RENDER = {
+  title: () => `<div class="title-body">
+      <span class="lbl gold">AI Engineering · Week 9</span>
+      <h1>Think before you act.<br><span class="mark-gold">Never lose your place.</span></h1>
+      <p class="title-sub">Planning and memory for mycode: a todo list, plan mode, checks that decide “done”, sessions, user memory and handoffs. Plain Python, plain files.</p>
+      <div class="title-by"><img src="logo-mark.png" alt=""><div><strong>Pouria Jahandideh</strong><span>pjsofts.github.io · AI Engineering</span></div></div>
+    </div>`,
+  statement: (s) => `<div class="mid"><p class="stmt">${s.text}</p>${s.sub ? `<p class="stmt-sub">${s.sub}</p>` : ""}</div>`,
+  section: (s) => `<div class="mid"><span class="sec-n">${s.n}</span><h2>${s.title}</h2><p>${s.sub}</p></div>`,
+  agenda: () => `<header class="hd"><span class="lbl">Today</span><h2>Eight steps: plan, prove, remember</h2></header>
+    <ol class="agenda two">${AGENDA.map(([n, t, l]) => `<li><span class="n">${n}</span><span><span class="t">${t}</span><span class="l">${l}</span></span></li>`).join("")}</ol>`,
+  points: (s) => `${head(s)}<ol class="pts${s.dense ? " dense" : ""}">${s.points.map(([b, r], i) =>
+      `<li><span class="n">${String(i + 1).padStart(2, "0")}</span><span><strong>${b}</strong> <span class="rest">${r}</span></span></li>`).join("")}</ol>${note(s)}`,
+  compare: (s) => `${head(s)}<div class="cmp">${s.cols.map((c) =>
+      `<div class="col ${c.tone}"><h3>${c.h}</h3><ul>${c.items.map((i) => `<li>${i}</li>`).join("")}</ul>${c.pre ? `<pre>${esc(c.pre)}</pre>` : ""}</div>`).join("")}</div>${note(s)}`,
+  code: (s) => `<div class="code-grid">
+      <div class="code-copy"><span class="lbl">${s.lbl}</span><h2>${s.title}</h2><p>${s.caption}</p>${demoTag(s)}</div>
+      <div class="term"><div class="term-bar"><i></i><i></i><i></i><span>${s.file}</span></div><div class="term-body" style="font-size:${codeSize(s.code)}px">${highlight(s.code, s.hl)}</div></div>
+    </div>`,
+  table: (s) => `${head(s)}<table class="tbl"><thead><tr>${s.head.map((h) => `<th>${h}</th>`).join("")}</tr></thead>
+    <tbody>${s.rows.map((r) => `<tr>${r.map((c, j) => j === 0 ? `<th>${c}</th>` : `<td>${c}</td>`).join("")}</tr>`).join("")}</tbody></table>${note(s)}`,
+  week: () => `<header class="hd"><span class="lbl">The week</span><h2>The whole week on one slide</h2></header>
+    <div class="lane"><div class="lane-name">Plan<small>before any change</small></div>
+      <div class="box"><b>0 · Eager</b><span>no plan, no check: 5 files, tests fail</span></div>
+      <div class="box llm"><b>1 · Todo list</b><span>written down, one task at a time</span></div>
+      <div class="box api"><b>2 · Plan mode</b><span>read-only tools, then a person says yes</span></div>
+      <div class="box db"><b>3 · Features</b><span>a passing command marks “done”</span></div></div>
+    <div class="lane"><div class="lane-name">Prove · remember<small>after the work</small></div>
+      <div class="box db"><b>4 · Checker</b><span>a fresh, strict agent decides</span></div>
+      <div class="box"><b>5 · Sessions</b><span>monday.jsonl, one line per message</span></div>
+      <div class="box llm"><b>6 · User memory</b><span>memory.md, in every project</span></div>
+      <div class="box api"><b>7 · Handoff</b><span>PROGRESS.md for the next session</span></div></div>
+    <p class="note"><b>The loop never changed.</b> We changed which tools it gets, what it is told, who decides it is done, and which files it reads when it starts.</p>`,
+  checklist: () => `<header class="hd"><span class="lbl">You ship · Week 9</span><h2>An agent that plans, proves, and remembers</h2></header>
+    <ul class="check">${CHECKLIST.map((c) => `<li>${c}</li>`).join("")}</ul>
+    <p class="note"><b>Stretch:</b> persist the todo list in the session · a /plan slash command · give the checker a browser · compact a long session into PROGRESS.md.</p>`,
+  end: () => `<div class="mid end-body"><img src="logo.png" alt=""><h2>Questions?</h2>
+    <p>Next week: artifacts, preview and sandbox. See what the agent built, running live, in a locked-down sandbox.</p></div>`,
+};
+
+const stage = document.getElementById("stage");
+const INK = new Set(["statement", "section", "end"]);
+SLIDES.forEach((s, i) => {
+  const a = document.createElement("article");
+  a.className = `slide s-${s.t}${INK.has(s.t) ? " ink" : ""}`;
+  a.innerHTML = RENDER[s.t](s) + (s.t === "title" ? "" :
+    `<footer class="sfoot"><span class="brand"><img src="logo-mark.png" alt="">Pouria Jahandideh · Week 9 · Planning &amp; Memory</span><span>${String(i + 1).padStart(2, "0")} / ${SLIDES.length}</span></footer>`);
+  stage.append(a);
+});
+
+// ------------------------------------------------------------------ navigation
+const slides = [...document.querySelectorAll(".slide")];
+const N = slides.length;
+let cur = 0;
+const fromHash = () => { const n = parseInt(location.hash.slice(1), 10); return Number.isFinite(n) ? Math.min(Math.max(n - 1, 0), N - 1) : 0; };
+function show(i) {
+  cur = Math.min(Math.max(i, 0), N - 1);
+  slides.forEach((s, j) => s.classList.toggle("on", j === cur));
+  document.getElementById("counter").textContent = `${cur + 1} / ${N}`;
+  document.getElementById("bar").style.width = `${((cur + 1) / N) * 100}%`;
+  history.replaceState(null, "", `#${cur + 1}`);
+}
+function fit() { document.documentElement.style.setProperty("--s", Math.min(innerWidth / 1280, (innerHeight - 52) / 720)); }
+function full() { document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen?.(); }
+document.addEventListener("keydown", (e) => {
+  if (e.metaKey || e.ctrlKey || e.altKey) return;
+  const k = e.key;
+  if (["ArrowRight", "PageDown", " ", "l"].includes(k)) show(cur + 1);
+  else if (["ArrowLeft", "PageUp", "h"].includes(k)) show(cur - 1);
+  else if (k === "Home") show(0);
+  else if (k === "End") show(N - 1);
+  else if (k === "f" || k === "F") full();
+  else return;
+  e.preventDefault();
+});
+document.querySelectorAll("[data-go]").forEach((b) => b.onclick = () => {
+  const go = b.dataset.go;
+  if (go === "next") show(cur + 1); else if (go === "prev") show(cur - 1); else if (go === "full") full(); else window.print();
+});
+addEventListener("resize", fit);
+addEventListener("hashchange", () => show(fromHash()));
+fit();
+show(fromHash());
+</script>
+</body>
+</html>
