@@ -17,6 +17,13 @@ Most agent tutorials stop at "call the model in a loop". Real agents also need t
 | `week7-rag` | RAG from scratch with a live visualizer: chunking, embeddings, similarity scores and indexing, step by step. |
 | `week9-planning-memory` | An agent that plans before it changes code, lets the harness decide when it's done, and remembers across sessions. Includes a live visualizer and slides. |
 
+## Design decisions
+
+- **No agent framework.** Every layer is plain TypeScript or Python, so you can see exactly what a harness does. Frameworks hide the parts this course is about.
+- **The harness decides, not the model.** Permission gates, loop limits and "is it done?" checks live in code (week 5's guards, week 9's feature list), because a model's say-so isn't proof.
+- **One agent that grows.** Each week extends the same `mycode` agent instead of starting over, so the trade-offs stay visible: a new feature has to fit what's already there.
+- **GUIs reuse the real code.** The week 3–5 GUIs import the workshop modules unmodified; nothing is reimplemented for the demo.
+
 ## How to run it
 
 Each folder has its own README with setup steps. In general:
@@ -32,5 +39,14 @@ pip install -r requirements.txt
 cp .env.example .env
 python server.py
 ```
+
+## Tests
+
+```bash
+pip install pytest
+pytest -q week9-planning-memory/tests   # todo-list rule and feature-list logic, no API key needed
+```
+
+CI runs them on every push.
 
 Built by [Pouria Jahandideh](https://pouriajahandideh.com). Course: [pjsofts.github.io](https://pjsofts.github.io/).
