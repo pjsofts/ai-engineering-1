@@ -2,7 +2,7 @@
 import sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "planning"))
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "week9-planning-memory" / "planning"))
 
 import todos  # noqa: E402
 from features import next_feature, progress  # noqa: E402

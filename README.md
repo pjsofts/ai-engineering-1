@@ -44,7 +44,7 @@ python server.py
 
 ```bash
 pip install pytest
-pytest -q week9-planning-memory/tests   # todo-list rule and feature-list logic, no API key needed
+pytest -q tests   # todo-list rule and feature-list logic, no API key needed
 ```
 
 CI runs them on every push.
